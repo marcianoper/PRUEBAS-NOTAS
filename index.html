@@ -32,7 +32,7 @@
         <option value="Panza">Panza</option>
         <option value="Libro">Libro</option>
         <option value="Tripa">Tripa</option>
-        <option value="Tripa de rastro">Tripá de rastro</option>
+        <option value="Tripa de rastro">Tripa de rastro</option>
         <option value="Corazon">Corazon</option>
         <option value="Higado">Higado</option>
         <option value="Sebo">Sebo</option>
@@ -54,7 +54,7 @@
         <option value="Producto Libre">Producto Libre</option>
         <option value="Lengua">Lengua</option>
         <option value="Caja de tripa">Caja de tripa</option>
-         <option value="Caja Menudo Swift">Caja Menudo Swift</option>
+        <option value="Caja Menudo Swift">Caja Menudo Swift</option>
       </select>
     </label>
 
@@ -119,13 +119,18 @@
     <button onclick="enviarWhatsApp()">Enviar resumen a WhatsApp</button>
   </div>
 
-  <!-- Supabase JS -->
+  <!-- Supabase JS (UMD) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
-    /* ===== CONFIG SUPABASE (reemplaza con tu proyecto único) ===== */
-    const SUPABASE_URL = "https://eqynjddcosvdqjzztznn.supabase.co  ";         // <- CAMBIA
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxeW5qZGRjb3N2ZHFqenp0em5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYxMzYwMzIsImV4cCI6MjA3MTcxMjAzMn0.Q51wsGelUvxRfqsMYRY5JduCGyZ7s6AzOhqsRf3kOhk";                        // <- CAMBIA
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    /* ===== CONFIG SUPABASE ===== */
+    const SUPABASE_URL = "https://eqynjddcosvdqjzztznn.supabase.co"; // sin espacios
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxeW5qZGRjb3N2ZHFqenp0em5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYxMzYwMzIsImV4cCI6MjA3MTcxMjAzMn0.Q51wsGelUvxRfqsMYRY5JduCGyZ7s6AzOhqsRf3kOhk";
+
+    // OJO: NO usar "const supabase = ..." porque el CDN ya usa ese nombre global.
+    const supabaseClient = (window.supabase && window.supabase.createClient)
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      : null;
 
     /* ===== Estado de la página ===== */
     let enviados = [];
@@ -143,7 +148,14 @@
         return;
       }
 
-      enviados.push({ producto, kilos: parseFloat(kilos), piezas: parseInt(piezas || 0,10), origen, congelado });
+      enviados.push({
+        producto,
+        kilos: parseFloat(kilos),
+        piezas: parseInt(piezas || 0, 10),
+        origen,
+        congelado
+      });
+
       renderTablaEnviados();
       scheduleSaves();
     }
@@ -180,7 +192,7 @@
         <tr>
           <td>${item.producto}</td>
           <td>${(+item.kilos).toFixed(2)}</td>
-          <td>${item.piezas||0}</td>
+          <td>${item.piezas || 0}</td>
           <td>${item.origen}</td>
           <td>${item.congelado}</td>
           <td><button onclick="eliminarProducto(${index})">Eliminar</button></td>
@@ -207,15 +219,15 @@
 
       enviados.forEach(p => {
         if (!agrupadoEnviados[p.producto]) agrupadoEnviados[p.producto] = { kilos: 0, piezas: 0 };
-        agrupadoEnviados[p.producto].kilos += parseFloat(p.kilos||0);
-        agrupadoEnviados[p.producto].piezas += parseInt(p.piezas||0,10);
-        totalKilosEnviados += parseFloat(p.kilos||0);
+        agrupadoEnviados[p.producto].kilos += parseFloat(p.kilos || 0);
+        agrupadoEnviados[p.producto].piezas += parseInt(p.piezas || 0, 10);
+        totalKilosEnviados += parseFloat(p.kilos || 0);
       });
 
       devueltos.forEach(p => {
         if (!agrupadoDevueltos[p.producto]) agrupadoDevueltos[p.producto] = 0;
-        agrupadoDevueltos[p.producto] += parseFloat(p.kilos||0);
-        totalKilosDevueltos += parseFloat(p.kilos||0);
+        agrupadoDevueltos[p.producto] += parseFloat(p.kilos || 0);
+        totalKilosDevueltos += parseFloat(p.kilos || 0);
       });
 
       let mensaje = `*Resumen VDC 360° - ${fecha}*\n\n`;
@@ -255,7 +267,6 @@
         const k = el.id || el.name || el.dataset.key; if(!k) return;
         data[k] = (el.type==='checkbox') ? !!el.checked : el.value;
       });
-      // incluir tablas
       data.__enviados = enviados;
       data.__devueltos = devueltos;
       return data;
@@ -269,59 +280,100 @@
         if(el.type==='checkbox') el.checked = !!data[k];
         else el.value = data[k];
       });
-      if (Array.isArray(data.__enviados)) { enviados = data.__enviados.map(x=>({...x, kilos:+x.kilos, piezas:+(x.piezas||0)})); renderTablaEnviados(); }
-      if (Array.isArray(data.__devueltos)) { devueltos = data.__devueltos.map(x=>({...x, kilos:+x.kilos})); renderTablaDevueltos(); }
+      if (Array.isArray(data.__enviados)) {
+        enviados = data.__enviados.map(x=>({ ...x, kilos:+x.kilos, piezas:+(x.piezas||0) }));
+        renderTablaEnviados();
+      }
+      if (Array.isArray(data.__devueltos)) {
+        devueltos = data.__devueltos.map(x=>({ ...x, kilos:+x.kilos }));
+        renderTablaDevueltos();
+      }
     }
 
     // LocalStorage
     let hasUnsavedChanges=false, tLocal=null;
     function lkey(){ return `draft:${CLOUD_MODULE}:${getCloudKey()}`; }
-    function saveLocal(){ localStorage.setItem(lkey(), JSON.stringify({ts:Date.now(), data:collectFormData()})); hasUnsavedChanges=true; }
-    function loadLocal(){ const raw=localStorage.getItem(lkey()); if(!raw) return; try{ applyFormData(JSON.parse(raw).data); }catch{} }
+    function saveLocal(){
+      localStorage.setItem(lkey(), JSON.stringify({ts:Date.now(), data:collectFormData()}));
+      hasUnsavedChanges=true;
+    }
+    function loadLocal(){
+      const raw=localStorage.getItem(lkey());
+      if(!raw) return;
+      try{ applyFormData(JSON.parse(raw).data); }catch{}
+    }
     function clearLocal(){ localStorage.removeItem(lkey()); hasUnsavedChanges=false; }
 
-    function onAnyChange(){ clearTimeout(tLocal); tLocal=setTimeout(saveLocal, 500); scheduleCloud(); }
+    function onAnyChange(){
+      clearTimeout(tLocal);
+      tLocal=setTimeout(saveLocal, 500);
+      scheduleCloud();
+    }
+
     $allInputs().forEach(el=> el.addEventListener('input', onAnyChange));
     window.addEventListener('beforeunload', (e)=>{ if(!hasUnsavedChanges) return; e.preventDefault(); e.returnValue=''; });
 
     // Nube (Supabase)
-    async function uid(){ try{ const { data:{user} } = await supabase.auth.getUser(); return user?.id||null; }catch{ return null; } }
+    async function uid(){
+      try{
+        if(!supabaseClient) return null;
+        const { data:{ user } } = await supabaseClient.auth.getUser();
+        return user?.id || null;
+      }catch{ return null; }
+    }
+
     let tCloud=null;
     function scheduleCloud(){ clearTimeout(tCloud); tCloud=setTimeout(saveCloud, 1000); }
+
     async function saveCloud(){
-      const user_id = await uid(); if(!user_id) return;
-      const payload = { module:CLOUD_MODULE, draft_key:getCloudKey(), user_id, data:collectFormData(), updated_at:new Date().toISOString() };
-      await supabase.from('app_drafts').upsert(payload, { onConflict:'module,draft_key,user_id' });
+      const user_id = await uid();
+      if(!user_id) return; // si no hay login, no sube (pero local sí)
+      const payload = {
+        module:CLOUD_MODULE,
+        draft_key:getCloudKey(),
+        user_id,
+        data:collectFormData(),
+        updated_at:new Date().toISOString()
+      };
+      await supabaseClient.from('app_drafts').upsert(payload, { onConflict:'module,draft_key,user_id' });
     }
+
     async function loadCloud(){
-      const user_id = await uid(); if(!user_id) return;
-      const { data } = await supabase.from('app_drafts').select('data')
-        .eq('module', CLOUD_MODULE).eq('draft_key', getCloudKey()).eq('user_id', user_id).maybeSingle();
+      const user_id = await uid();
+      if(!user_id) return;
+      const { data } = await supabaseClient.from('app_drafts')
+        .select('data')
+        .eq('module', CLOUD_MODULE)
+        .eq('draft_key', getCloudKey())
+        .eq('user_id', user_id)
+        .maybeSingle();
       if(data?.data) applyFormData(data.data);
     }
+
     async function clearCloud(){
       const user_id = await uid();
       if(user_id){
-        await supabase.from('app_drafts')
-          .delete().eq('module',CLOUD_MODULE).eq('draft_key',getCloudKey()).eq('user_id',user_id);
+        await supabaseClient.from('app_drafts')
+          .delete()
+          .eq('module',CLOUD_MODULE)
+          .eq('draft_key',getCloudKey())
+          .eq('user_id', user_id);
       }
       clearLocal();
     }
+
     window.__VDC360_DRAFTS__ = { clearCloudDraft: clearCloud };
 
-    // Inicializar (primero nube, si hay login; luego local)
     window.addEventListener('load', async ()=>{
       await loadCloud();
       loadLocal();
     });
 
-    // si cambias la fecha, recarga el draft de ese día
     document.querySelector('#fecha')?.addEventListener('change', async ()=>{
       await loadCloud();
       loadLocal();
     });
 
-    // también guardamos al modificar tablas
     function scheduleSaves(){ onAnyChange(); }
   </script>
 </body>
