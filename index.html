@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registro Mostrador VDC 360°</title>
+  <style>
+    body { font-family: sans-serif; background:#f2f2f2; padding:20px; }
+    .container { background:#fff; padding:30px; border-radius:10px; max-width:900px; margin:auto; }
+    h1 { color:green; }
+    label { display:block; margin-top:15px; }
+    input, select { width:100%; padding:10px; margin-top:5px; }
+    button { margin-top:20px; padding:12px; background:#1f6f26; color:#fff; border:none; border-radius:5px; cursor:pointer; width:100%; font-weight:bold; }
+    table { width:100%; margin-top:20px; border-collapse:collapse; }
+    th, td { border:2px solid #1f6f26; padding:8px; text-align:center; }
+    th { background:#1f6f26; color:#fff; }
+    .subtitulo { font-size:22px; font-weight:bold; margin-top:40px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Registro Mostrador VDC 360° matrix</h1>
+
+    <label>Fecha:
+      <input type="date" id="fecha" value="">
+    </label>
+
+    <label>Producto:
+      <select id="producto">
+        <option value="">Seleccionar</option>
+        <option value="Caja menudo vísceras">Caja menudo vísceras</option>
+        <option value="Caja Menudo National">Caja Menudo National</option>
+        <option value="Panza">Panza</option>
+        <option value="Libro">Libro</option>
+        <option value="Tripa">Tripa</option>
+        <option value="Tripa de rastro">Tripá de rastro</option>
+        <option value="Corazon">Corazon</option>
+        <option value="Higado">Higado</option>
+        <option value="Sebo">Sebo</option>
+        <option value="Pata Blanca">Pata Blanca</option>
+        <option value="Pata Morena">Pata Morena</option>
+        <option value="Cabeza sin lengua">Cabeza sin lengua</option>
+        <option value="Bofe">Bofe</option>
+        <option value="Tripa Gorda">Tripa gorda</option>
+        <option value="Caja Excel">Caja Excel</option>
+        <option value="Menudo Canadian">Menudo Canadian</option>
+        <option value="Caja Washington">Caja Washington</option>
+        <option value="Cabeza de res">Cabeza de res</option>
+        <option value="Teleco">Teleco</option>
+        <option value="Nana">Nana</option>
+        <option value="Cabeza de Rastro">Cabeza de Rastro</option>
+        <option value="Tripa de Rastro">Tripa de Rastro</option>
+        <option value="Cabeza Congelada">Cabeza Congelada</option>
+        <option value="Quajo">Quajo</option>
+        <option value="Producto Libre">Producto Libre</option>
+        <option value="Lengua">Lengua</option>
+        <option value="Caja de tripa">Caja de tripa</option>
+         <option value="Caja Menudo Swift">Caja Menudo Swift</option>
+      </select>
+    </label>
+
+    <label>Kilos:
+      <input type="number" id="kilos" />
+    </label>
+
+    <label>Piezas (opcional):
+      <input type="number" id="piezas" />
+    </label>
+
+    <label>Origen:
+      <input type="text" id="origen" />
+    </label>
+
+    <label>¿Es congelado?
+      <select id="congelado">
+        <option value="No">No</option>
+        <option value="Sí">Sí</option>
+      </select>
+    </label>
+
+    <button onclick="agregarProducto()">Agregar producto</button>
+
+    <h2 class="subtitulo">Productos enviados</h2>
+    <table id="tablaEnviados">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Kilos</th>
+          <th>Piezas</th>
+          <th>Origen</th>
+          <th>Congelado</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <h2 class="subtitulo">Productos devueltos</h2>
+    <label>Producto devuelto:
+      <input type="text" id="productoDevuelto" />
+    </label>
+
+    <label>Kilos devueltos:
+      <input type="number" id="kilosDevuelto" />
+    </label>
+
+    <button onclick="agregarDevuelto()">Agregar producto devuelto</button>
+
+    <table id="tablaDevueltos">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Kilos</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <button onclick="enviarWhatsApp()">Enviar resumen a WhatsApp</button>
+  </div>
+
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    /* ===== CONFIG SUPABASE (reemplaza con tu proyecto único) ===== */
+    const SUPABASE_URL = "https://eqynjddcosvdqjzztznn.supabase.co  ";         // <- CAMBIA
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxeW5qZGRjb3N2ZHFqenp0em5uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYxMzYwMzIsImV4cCI6MjA3MTcxMjAzMn0.Q51wsGelUvxRfqsMYRY5JduCGyZ7s6AzOhqsRf3kOhk";                        // <- CAMBIA
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    /* ===== Estado de la página ===== */
+    let enviados = [];
+    let devueltos = [];
+
+    function agregarProducto() {
+      const producto = document.getElementById('producto').value;
+      const kilos = document.getElementById('kilos').value;
+      const piezas = document.getElementById('piezas').value || 0;
+      const origen = document.getElementById('origen').value;
+      const congelado = document.getElementById('congelado').value;
+
+      if (!producto || !kilos || !origen) {
+        alert("Por favor completa los campos obligatorios.");
+        return;
+      }
+
+      enviados.push({ producto, kilos: parseFloat(kilos), piezas: parseInt(piezas || 0,10), origen, congelado });
+      renderTablaEnviados();
+      scheduleSaves();
+    }
+
+    function agregarDevuelto() {
+      const producto = document.getElementById('productoDevuelto').value;
+      const kilos = document.getElementById('kilosDevuelto').value;
+
+      if (!producto || !kilos) {
+        alert("Completa ambos campos del producto devuelto.");
+        return;
+      }
+
+      devueltos.push({ producto, kilos: parseFloat(kilos) });
+      renderTablaDevueltos();
+      scheduleSaves();
+    }
+
+    function eliminarProducto(index) {
+      enviados.splice(index, 1);
+      renderTablaEnviados();
+      scheduleSaves();
+    }
+
+    function eliminarDevuelto(index) {
+      devueltos.splice(index, 1);
+      renderTablaDevueltos();
+      scheduleSaves();
+    }
+
+    function renderTablaEnviados() {
+      const tbody = document.querySelector("#tablaEnviados tbody");
+      tbody.innerHTML = enviados.map((item, index) => `
+        <tr>
+          <td>${item.producto}</td>
+          <td>${(+item.kilos).toFixed(2)}</td>
+          <td>${item.piezas||0}</td>
+          <td>${item.origen}</td>
+          <td>${item.congelado}</td>
+          <td><button onclick="eliminarProducto(${index})">Eliminar</button></td>
+        </tr>`).join('');
+    }
+
+    function renderTablaDevueltos() {
+      const tbody = document.querySelector("#tablaDevueltos tbody");
+      tbody.innerHTML = devueltos.map((item, index) => `
+        <tr>
+          <td>${item.producto}</td>
+          <td>${(+item.kilos).toFixed(2)}</td>
+          <td><button onclick="eliminarDevuelto(${index})">Eliminar</button></td>
+        </tr>`).join('');
+    }
+
+    function enviarWhatsApp() {
+      const fecha = document.getElementById("fecha").value;
+
+      const agrupadoEnviados = {};
+      const agrupadoDevueltos = {};
+      let totalKilosEnviados = 0;
+      let totalKilosDevueltos = 0;
+
+      enviados.forEach(p => {
+        if (!agrupadoEnviados[p.producto]) agrupadoEnviados[p.producto] = { kilos: 0, piezas: 0 };
+        agrupadoEnviados[p.producto].kilos += parseFloat(p.kilos||0);
+        agrupadoEnviados[p.producto].piezas += parseInt(p.piezas||0,10);
+        totalKilosEnviados += parseFloat(p.kilos||0);
+      });
+
+      devueltos.forEach(p => {
+        if (!agrupadoDevueltos[p.producto]) agrupadoDevueltos[p.producto] = 0;
+        agrupadoDevueltos[p.producto] += parseFloat(p.kilos||0);
+        totalKilosDevueltos += parseFloat(p.kilos||0);
+      });
+
+      let mensaje = `*Resumen VDC 360° - ${fecha}*\n\n`;
+      mensaje += `🟢 *Productos enviados:*\n`;
+      for (const [producto, datos] of Object.entries(agrupadoEnviados)) {
+        mensaje += `• ${producto}: ${datos.kilos.toFixed(2)} kg / ${datos.piezas} pzas\n`;
+      }
+      mensaje += `\n📦 *Total kilos enviados:* ${totalKilosEnviados.toFixed(2)} kg\n`;
+
+      if (devueltos.length > 0) {
+        mensaje += `\n🔴 *Productos devueltos:*\n`;
+        for (const [producto, kilos] of Object.entries(agrupadoDevueltos)) {
+          mensaje += `• ${producto}: ${kilos.toFixed(2)} kg\n`;
+        }
+        mensaje += `\n📦 *Total kilos devueltos:* ${totalKilosDevueltos.toFixed(2)} kg\n`;
+      }
+
+      const url = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
+      window.open(url, "_blank");
+    }
+
+    document.getElementById("fecha").valueAsDate = new Date();
+
+    /* ========= AUTOSAVE LOCAL + NUBE (app_drafts) ========= */
+    const CLOUD_MODULE = 'mostrador';
+    const $ = (s)=>document.querySelector(s);
+    const $allInputs = ()=>Array.from(document.querySelectorAll('input, select, textarea'));
+
+    function getCloudKey(){
+      const f = $('#fecha')?.value || new Date().toISOString().slice(0,10);
+      return `mostrador-${f}`;
+    }
+
+    function collectFormData(){
+      const data = {};
+      $allInputs().forEach(el=>{
+        const k = el.id || el.name || el.dataset.key; if(!k) return;
+        data[k] = (el.type==='checkbox') ? !!el.checked : el.value;
+      });
+      // incluir tablas
+      data.__enviados = enviados;
+      data.__devueltos = devueltos;
+      return data;
+    }
+
+    function applyFormData(data){
+      if(!data) return;
+      $allInputs().forEach(el=>{
+        const k = el.id || el.name || el.dataset.key;
+        if(!k || !(k in data)) return;
+        if(el.type==='checkbox') el.checked = !!data[k];
+        else el.value = data[k];
+      });
+      if (Array.isArray(data.__enviados)) { enviados = data.__enviados.map(x=>({...x, kilos:+x.kilos, piezas:+(x.piezas||0)})); renderTablaEnviados(); }
+      if (Array.isArray(data.__devueltos)) { devueltos = data.__devueltos.map(x=>({...x, kilos:+x.kilos})); renderTablaDevueltos(); }
+    }
+
+    // LocalStorage
+    let hasUnsavedChanges=false, tLocal=null;
+    function lkey(){ return `draft:${CLOUD_MODULE}:${getCloudKey()}`; }
+    function saveLocal(){ localStorage.setItem(lkey(), JSON.stringify({ts:Date.now(), data:collectFormData()})); hasUnsavedChanges=true; }
+    function loadLocal(){ const raw=localStorage.getItem(lkey()); if(!raw) return; try{ applyFormData(JSON.parse(raw).data); }catch{} }
+    function clearLocal(){ localStorage.removeItem(lkey()); hasUnsavedChanges=false; }
+
+    function onAnyChange(){ clearTimeout(tLocal); tLocal=setTimeout(saveLocal, 500); scheduleCloud(); }
+    $allInputs().forEach(el=> el.addEventListener('input', onAnyChange));
+    window.addEventListener('beforeunload', (e)=>{ if(!hasUnsavedChanges) return; e.preventDefault(); e.returnValue=''; });
+
+    // Nube (Supabase)
+    async function uid(){ try{ const { data:{user} } = await supabase.auth.getUser(); return user?.id||null; }catch{ return null; } }
+    let tCloud=null;
+    function scheduleCloud(){ clearTimeout(tCloud); tCloud=setTimeout(saveCloud, 1000); }
+    async function saveCloud(){
+      const user_id = await uid(); if(!user_id) return;
+      const payload = { module:CLOUD_MODULE, draft_key:getCloudKey(), user_id, data:collectFormData(), updated_at:new Date().toISOString() };
+      await supabase.from('app_drafts').upsert(payload, { onConflict:'module,draft_key,user_id' });
+    }
+    async function loadCloud(){
+      const user_id = await uid(); if(!user_id) return;
+      const { data } = await supabase.from('app_drafts').select('data')
+        .eq('module', CLOUD_MODULE).eq('draft_key', getCloudKey()).eq('user_id', user_id).maybeSingle();
+      if(data?.data) applyFormData(data.data);
+    }
+    async function clearCloud(){
+      const user_id = await uid();
+      if(user_id){
+        await supabase.from('app_drafts')
+          .delete().eq('module',CLOUD_MODULE).eq('draft_key',getCloudKey()).eq('user_id',user_id);
+      }
+      clearLocal();
+    }
+    window.__VDC360_DRAFTS__ = { clearCloudDraft: clearCloud };
+
+    // Inicializar (primero nube, si hay login; luego local)
+    window.addEventListener('load', async ()=>{
+      await loadCloud();
+      loadLocal();
+    });
+
+    // si cambias la fecha, recarga el draft de ese día
+    document.querySelector('#fecha')?.addEventListener('change', async ()=>{
+      await loadCloud();
+      loadLocal();
+    });
+
+    // también guardamos al modificar tablas
+    function scheduleSaves(){ onAnyChange(); }
+  </script>
+</body>
+</html>
