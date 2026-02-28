@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -49,7 +48,6 @@
       font-family: ui-monospace, Menlo, Consolas, monospace;
     }
 
-    /* ===== barra borrador ===== */
     .draftbar{
       display:flex; gap:10px; flex-wrap:wrap; align-items:center;
       margin: 8px 0 18px;
@@ -61,6 +59,9 @@
     .draftbar .status{
       font-size:12px; color:#6b7280; font-weight:700;
     }
+
+    /* Solo se ve cuando eliges "Producto libre" */
+    #prodNombreWrap{ display:none; }
   </style>
 </head>
 
@@ -85,7 +86,6 @@
   <div class="container">
     <h1>Hoja de pesos y sebo</h1>
 
-    <!-- ===== borrador ===== -->
     <div class="draftbar">
       <button class="btn-gray" type="button" onclick="vdcDraftSave()">💾 Guardar borrador</button>
       <button class="btn-red" type="button" onclick="vdcDraftClear()">🧹 Limpiar borrador</button>
@@ -106,7 +106,6 @@
 
     <div class="hr"></div>
 
-    <!-- SEBO -->
     <h2 style="margin:0;">Papel de sebo 80mm</h2>
     <div class="row">
       <div>
@@ -120,7 +119,6 @@
 
     <div class="hr"></div>
 
-    <!-- ETIQUETA LIBRE -->
     <h2 style="margin:0;">Etiqueta libre 80mm</h2>
     <div class="hint">Escribe el texto como quieras (con saltos de línea). Ej: “CAJA WASHINGTON↵890 kg↵40 cajas”.</div>
 
@@ -144,9 +142,9 @@
 
     <div class="hr"></div>
 
-    <!-- === MENSAJE LIBRE PARA WHATSAPP === -->
+    <!-- === MENSAJE PARA WHATSAPP === -->
     <h2 style="margin:0;">Mensaje de pesajes para WhatsApp</h2>
-    <div class="hint">Aquí registras lo recibido (sucio/limpio, etc.) y generas el mensaje listo para enviar.</div>
+    <div class="hint">Elige el origen, luego el producto (combo) y agrega kg/pzas.</div>
 
     <div class="row">
       <div>
@@ -157,14 +155,7 @@
           <option value="granja">Granja</option>
           <option value="limpieza">Limpieza</option>
         </select>
-        <div class="mini">Elige el tipo y luego el detalle.</div>
-      </div>
-
-      <div>
-        <label>Origen (detalle):</label>
-        <select id="origenDetalle" disabled>
-          <option value="">— Selecciona tipo primero —</option>
-        </select>
+        <div class="mini">Esto define qué opciones salen en “Producto”.</div>
       </div>
 
       <div>
@@ -176,9 +167,18 @@
 
     <div class="row">
       <div>
-        <label for="prodNombre">Producto:</label>
-        <input id="prodNombre" placeholder="Ej. Panza sucia / Libro limpio / Menudo sucio / Cabeza de res" />
+        <label>Producto (según origen):</label>
+        <select id="prodSelect" disabled>
+          <option value="">— Selecciona origen primero —</option>
+        </select>
+        <div class="mini">Incluye “Producto libre” si ocupas escribir algo especial.</div>
       </div>
+
+      <div id="prodNombreWrap">
+        <label for="prodNombre">Producto libre:</label>
+        <input id="prodNombre" placeholder="Escribe producto personalizado" />
+      </div>
+
       <div>
         <label for="prodKg">Kg (opcional):</label>
         <input type="number" id="prodKg" step="0.01" min="0" placeholder="Ej. 130" />
@@ -187,6 +187,7 @@
         <label for="prodPzas">Pzas (opcional):</label>
         <input type="number" id="prodPzas" step="1" min="0" placeholder="Ej. 20" />
       </div>
+
       <div style="flex:0 0 auto;">
         <button onclick="agregarLinea()">Agregar</button>
       </div>
@@ -222,12 +223,11 @@
     <div id="vistaMensaje" class="msgbox" style="display:none;"></div>
     <div id="resultado-totales"></div>
 
-    <!-- Panel de errores para tablet -->
     <div id="debug" class="msgbox" style="display:none;"></div>
   </div>
 
   <script>
-    // ========= COMPAT: replaceAll para Safari viejo =========
+    // ========= COMPAT: replaceAll =========
     (function(){
       if (!String.prototype.replaceAll) {
         String.prototype.replaceAll = function(search, replacement){
@@ -239,7 +239,6 @@
       }
     })();
 
-    // ========= DEBUG visible =========
     function showDebug(msg){
       const box = document.getElementById('debug');
       box.style.display = 'block';
@@ -252,7 +251,7 @@
       showDebug("❌ Promise rechazado:\n" + (e && e.reason ? (e.reason.message || e.reason) : e));
     });
 
-    // ========= Supabase (IMPORTANTE: NO usar variable llamada "supabase") =========
+    // ========= Supabase =========
     const supabaseUrl = 'https://rcegikeiaxptolrduguc.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJjZWdpa2VpYXhwdG9scmR1Z3VjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU2NTMyMDcsImV4cCI6MjA3MTIyOTIwN30.jbPM9F977zeITEmFA_xvVU6SCxlWWVCi3Dx7ZhFfTp8';
 
@@ -269,82 +268,79 @@
       return new Date().toLocaleDateString('es-MX');
     }
 
-    // ========= MENSAJES DE PESAJES (KG Y PZAS OPCIONALES) =========
+    // ========= DATA =========
     let pesajes = []; // {producto, kg|null, pzas|null}
 
-    // ========= ORIGEN (COMBOS) =========
-    const ORIGEN_MAP = {
+    // ========= ORIGEN -> OPCIONES DE PRODUCTO =========
+    const PRODUCT_OPTIONS_BY_ORIGEN = {
       rastro: [
-        { value: "Animales Jaramillo", label: "Animales Jaramillo" },
-        { value: "Animales Botello",   label: "Animales Botello" },
-        { value: "Animales Mireles",   label: "Animales Mireles" },
-        { value: "Animales Bravo",     label: "Animales Bravo" },
+        "Animales Jaramillo",
+        "Animales Botello",
+        "Animales Mireles",
+        "Animales Bravo"
       ],
       granja: [
-        { value: "Menudo sucio", label: "Menudo sucio" },
-        { value: "Libro sucio",  label: "Libro sucio" },
+        "Menudo sucio",
+        "Libro sucio"
       ],
       limpieza: [
-        { value: "Menudo limpio", label: "Menudo limpio" },
-        { value: "Libro limpio",  label: "Libro limpio" },
+        "Menudo limpio",
+        "Libro limpio"
       ]
     };
 
-    function setupOrigenCombos(){
-      const tipoEl = document.getElementById('origenTipo');
-      const detEl  = document.getElementById('origenDetalle');
+    function fillProductoOptions(origen){
+      const sel = document.getElementById('prodSelect');
+      const freeWrap = document.getElementById('prodNombreWrap');
+      const freeInput = document.getElementById('prodNombre');
 
-      const fillDetalle = (tipo) => {
-        detEl.innerHTML = '';
-        if(!tipo || !ORIGEN_MAP[tipo]){
-          detEl.disabled = true;
-          const op = document.createElement('option');
-          op.value = '';
-          op.textContent = '— Selecciona tipo primero —';
-          detEl.appendChild(op);
-          return;
-        }
+      sel.innerHTML = "";
 
-        detEl.disabled = false;
+      if(!origen || !PRODUCT_OPTIONS_BY_ORIGEN[origen]){
+        sel.disabled = true;
+        const op = document.createElement('option');
+        op.value = "";
+        op.textContent = "— Selecciona origen primero —";
+        sel.appendChild(op);
+        freeWrap.style.display = "none";
+        freeInput.value = "";
+        return;
+      }
 
-        const op0 = document.createElement('option');
-        op0.value = '';
-        op0.textContent = '— Selecciona —';
-        detEl.appendChild(op0);
+      sel.disabled = false;
 
-        ORIGEN_MAP[tipo].forEach(o=>{
-          const op = document.createElement('option');
-          op.value = o.value;
-          op.textContent = o.label;
-          detEl.appendChild(op);
-        });
-      };
+      const op0 = document.createElement('option');
+      op0.value = "";
+      op0.textContent = "— Selecciona —";
+      sel.appendChild(op0);
 
-      tipoEl.addEventListener('change', ()=>{
-        fillDetalle(tipoEl.value);
-        scheduleDraft();
+      PRODUCT_OPTIONS_BY_ORIGEN[origen].forEach(name=>{
+        const op = document.createElement('option');
+        op.value = name;
+        op.textContent = name;
+        sel.appendChild(op);
       });
 
-      detEl.addEventListener('change', ()=>{
-        scheduleDraft();
-      });
+      const opFree = document.createElement('option');
+      opFree.value = "__FREE__";
+      opFree.textContent = "Producto libre (escribir)";
+      sel.appendChild(opFree);
 
-      // init
-      fillDetalle(tipoEl.value);
+      // default hide
+      freeWrap.style.display = "none";
+      freeInput.value = "";
     }
 
-    function getOrigenLabel(){
-      const tipo = (document.getElementById('origenTipo').value || '').trim();
-      const det  = (document.getElementById('origenDetalle').value || '').trim();
-      if(!tipo || !det) return '';
-      const tipoNice = tipo.charAt(0).toUpperCase() + tipo.slice(1);
-      return `${tipoNice} — ${det}`;
+    function getOrigenNice(){
+      const tipo = (document.getElementById('origenTipo').value || "").trim();
+      if(!tipo) return "";
+      return tipo.charAt(0).toUpperCase() + tipo.slice(1);
     }
 
     function shouldShowKgTotal(){
-      const tipo = (document.getElementById('origenTipo').value || '').trim();
-      // "menos en los animales"
-      return (tipo === 'granja' || tipo === 'limpieza');
+      const tipo = (document.getElementById('origenTipo').value || "").trim();
+      // NO total para "animales" (rastro)
+      return (tipo === "granja" || tipo === "limpieza");
     }
 
     function totalKg(){
@@ -353,7 +349,7 @@
       return sum;
     }
 
-    // ========= BORRADOR LOCAL (GUARDA TODO) =========
+    // ========= BORRADOR =========
     function todayISO(){
       const d = new Date();
       const y = d.getFullYear();
@@ -377,9 +373,9 @@
           etiquetaTexto: document.getElementById('etiquetaTexto')?.value || '',
           etqCopias: document.getElementById('etqCopias')?.value || '1',
           origenTipo: document.getElementById('origenTipo')?.value || '',
-          origenDetalle: document.getElementById('origenDetalle')?.value || '',
-          whatsNumero: document.getElementById('whatsNumero')?.value || '',
+          prodSelect: document.getElementById('prodSelect')?.value || '',
           prodNombre: document.getElementById('prodNombre')?.value || '',
+          whatsNumero: document.getElementById('whatsNumero')?.value || '',
           prodKg: document.getElementById('prodKg')?.value || '',
           prodPzas: document.getElementById('prodPzas')?.value || ''
         },
@@ -401,39 +397,23 @@
       setVal('etiquetaTexto', f.etiquetaTexto);
       setVal('etqCopias', f.etqCopias);
       setVal('origenTipo', f.origenTipo);
-      // refresca detalle según tipo
-      const detEl = document.getElementById('origenDetalle');
-      const tipoEl = document.getElementById('origenTipo');
-      if(tipoEl && detEl){
-        // llenar opciones según tipo actual
-        const tipo = (tipoEl.value || '').trim();
-        detEl.innerHTML = '';
-        if(tipo && ORIGEN_MAP[tipo]){
-          detEl.disabled = false;
-          const op0 = document.createElement('option');
-          op0.value = '';
-          op0.textContent = '— Selecciona —';
-          detEl.appendChild(op0);
-          ORIGEN_MAP[tipo].forEach(o=>{
-            const op = document.createElement('option');
-            op.value = o.value;
-            op.textContent = o.label;
-            detEl.appendChild(op);
-          });
-          setVal('origenDetalle', f.origenDetalle);
-        }else{
-          detEl.disabled = true;
-          const op = document.createElement('option');
-          op.value = '';
-          op.textContent = '— Selecciona tipo primero —';
-          detEl.appendChild(op);
-        }
-      }
 
-      setVal('whatsNumero', f.whatsNumero);
+      // Llenar productos según origen antes de setear selección
+      fillProductoOptions(f.origenTipo || '');
+
+      setVal('prodSelect', f.prodSelect);
       setVal('prodNombre', f.prodNombre);
+      setVal('whatsNumero', f.whatsNumero);
       setVal('prodKg', f.prodKg);
       setVal('prodPzas', f.prodPzas);
+
+      // Mostrar/hide producto libre si corresponde
+      const freeWrap = document.getElementById('prodNombreWrap');
+      if((document.getElementById('prodSelect').value || '') === '__FREE__'){
+        freeWrap.style.display = 'block';
+      }else{
+        freeWrap.style.display = 'none';
+      }
 
       if(Array.isArray(d.pesajes)){
         pesajes = d.pesajes;
@@ -464,24 +444,24 @@
     function vdcDraftClear(){
       if(!confirm("¿Seguro que quieres borrar el borrador de HOY?")) return;
       localStorage.removeItem(DRAFT_KEY());
-      // limpiar UI
+
       document.getElementById('fecha').value = '';
       document.getElementById('seboKg').value = '';
       document.getElementById('etiquetaTexto').value = '';
       document.getElementById('etqCopias').value = 1;
 
       document.getElementById('origenTipo').value = '';
-      const det = document.getElementById('origenDetalle');
-      det.innerHTML = '<option value="">— Selecciona tipo primero —</option>';
-      det.disabled = true;
+      fillProductoOptions('');
+      document.getElementById('prodSelect').value = '';
+      document.getElementById('prodNombre').value = '';
+      document.getElementById('prodNombreWrap').style.display = 'none';
 
-      limpiarPesajes(); // limpia tabla e inputs relacionados
+      limpiarPesajes();
       document.getElementById('resultado-totales').textContent = '';
       setDraftStatus('Borrador limpiado 🧹');
       vdcDraftSave();
     }
 
-    // Autosave (debounce)
     let tDraft=null;
     function scheduleDraft(){
       clearTimeout(tDraft);
@@ -499,14 +479,13 @@
     window.vdcDraftLoad = vdcDraftLoad;
     window.vdcDraftClear = vdcDraftClear;
 
-    // ========= VIAJE / TOTALES (igual) =========
+    // ========= VIAJE / TOTALES =========
     async function guardarViaje() {
       if (!sb) return alert("Supabase no está listo (revisa panel de errores).");
 
       const fecha = document.getElementById('fecha').value;
       if (!fecha) return alert("Selecciona la fecha del viaje");
 
-      // ejemplo
       const datos = {
         "Teleco": [{ kg: 15.8, pzas: 14 }, { kg: 108.5, pzas: 100 }],
         "Cuajo": [{ kg: 40.2, pzas: 40 }]
@@ -658,16 +637,27 @@
     }
 
     // ========= PESAJES =========
-    function agregarLinea(){
-      const producto = (document.getElementById('prodNombre').value || '').trim();
+    function getSelectedProducto(){
+      const selVal = (document.getElementById('prodSelect').value || '').trim();
+      if(!selVal) return '';
+      if(selVal === '__FREE__'){
+        return (document.getElementById('prodNombre').value || '').trim();
+      }
+      return selVal;
+    }
 
+    function agregarLinea(){
+      const origenTipo = (document.getElementById('origenTipo').value || '').trim();
+      if(!origenTipo) return alert("Selecciona Origen (tipo).");
+
+      const producto = getSelectedProducto();
       const kgRaw = document.getElementById('prodKg').value;
       const pzasRaw = document.getElementById('prodPzas').value;
 
       const kg = (kgRaw === '') ? null : Number(kgRaw);
       const pzas = (pzasRaw === '') ? null : Number(pzasRaw);
 
-      if (!producto) return alert("Pon el nombre del producto.");
+      if (!producto) return alert("Selecciona un producto (o escribe en Producto libre).");
 
       const kgOk = (kg !== null && kg > 0);
       const pzasOk = (pzas !== null && pzas > 0);
@@ -679,9 +669,15 @@
         pzas: pzasOk ? parseInt(pzas,10) : null
       });
 
-      document.getElementById('prodNombre').value = '';
+      // reset
       document.getElementById('prodKg').value = '';
       document.getElementById('prodPzas').value = '';
+      if(document.getElementById('prodSelect').value === '__FREE__'){
+        document.getElementById('prodNombre').value = '';
+      }else{
+        document.getElementById('prodSelect').value = '';
+      }
+
       renderTabla();
       vdcDraftSave();
     }
@@ -708,15 +704,16 @@
     }
 
     function generarMensaje(){
-      const origen = getOrigenLabel();
+      const origenNice = getOrigenNice();
       const fecha = fechaMX();
+      const tipo = (document.getElementById('origenTipo').value || '').trim();
 
       if (pesajes.length === 0) return alert("Agrega al menos un producto.");
-      if (!origen) return alert("Selecciona Origen (tipo y detalle).");
+      if (!tipo) return alert("Selecciona Origen (tipo).");
 
       let msg = `📦 *PESAJE RECIBIDO*\n`;
       msg += `📅 Fecha: ${fecha}\n`;
-      msg += `👤 Origen: ${origen}\n\n`;
+      msg += `👤 Origen: ${origenNice}\n\n`;
       msg += `*Detalle:*\n`;
 
       pesajes.forEach(p => {
@@ -727,10 +724,9 @@
         msg += linea + `\n`;
       });
 
-      // ✅ TOTAL KG (solo en granja/limpieza; no en animales/rastro)
+      // total kg SOLO granja/limpieza (NO animales/rastro)
       if (shouldShowKgTotal()){
-        const tk = totalKg();
-        msg += `\n🧮 *Total KG:* ${tk.toFixed(2)} kg\n`;
+        msg += `\n🧮 *Total KG:* ${totalKg().toFixed(2)} kg\n`;
       }
 
       const box = document.getElementById('vistaMensaje');
@@ -772,9 +768,12 @@
     function limpiarPesajes(){
       pesajes = [];
       document.getElementById('whatsNumero').value = '';
-      document.getElementById('prodNombre').value = '';
       document.getElementById('prodKg').value = '';
       document.getElementById('prodPzas').value = '';
+      document.getElementById('prodSelect').value = '';
+      document.getElementById('prodNombre').value = '';
+      document.getElementById('prodNombreWrap').style.display = 'none';
+
       document.getElementById('vistaMensaje').style.display = 'none';
       document.getElementById('vistaMensaje').textContent = '';
       renderTabla();
@@ -790,7 +789,34 @@
         .replaceAll("'","&#039;");
     }
 
-    // Exponer globales
+    // ========= INIT UI =========
+    function setupUI(){
+      const origenEl = document.getElementById('origenTipo');
+      const prodSel = document.getElementById('prodSelect');
+      const freeWrap = document.getElementById('prodNombreWrap');
+
+      origenEl.addEventListener('change', ()=>{
+        fillProductoOptions(origenEl.value);
+        // reset selección y libre
+        prodSel.value = '';
+        freeWrap.style.display = 'none';
+        document.getElementById('prodNombre').value = '';
+        scheduleDraft();
+      });
+
+      prodSel.addEventListener('change', ()=>{
+        if(prodSel.value === '__FREE__'){
+          freeWrap.style.display = 'block';
+          document.getElementById('prodNombre').focus();
+        }else{
+          freeWrap.style.display = 'none';
+          document.getElementById('prodNombre').value = '';
+        }
+        scheduleDraft();
+      });
+    }
+
+    // ========= EXPONER =========
     window.guardarViaje = guardarViaje;
     window.generarDocumento = generarDocumento;
     window.imprimirSebo80mm = imprimirSebo80mm;
@@ -804,16 +830,16 @@
     window.abrirWhatsApp = abrirWhatsApp;
     window.limpiarPesajes = limpiarPesajes;
 
-    // ========= ARRANQUE: cargar borrador =========
+    // ========= ARRANQUE =========
     window.addEventListener('DOMContentLoaded', () => {
-      // fecha por defecto (si no hay borrador)
       const f = document.getElementById('fecha');
       if(f && !f.value) f.value = todayISO();
 
-      setupOrigenCombos();
+      setupUI();
+      fillProductoOptions('');
 
       vdcDraftLoad();
-      vdcDraftSave(); // crea/actualiza key del día
+      vdcDraftSave();
     });
   </script>
 </body>
