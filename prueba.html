@@ -2,74 +2,67 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Etiqueta Caja Menudo</title>
+<title>Etiqueta Menudo 80mm</title>
 
 <style>
   body{
     margin:0;
-    font-family: Arial, Helvetica, sans-serif;
-    background:#fff;
+    font-family: monospace;
   }
 
-  .etiqueta{
-    width: 18cm;
-    height: 12cm;
-    border: 3px solid #000;
-    padding: 20px;
-    box-sizing: border-box;
+  .ticket{
+    width:80mm;
+    height:200mm;
+    padding:8px;
+    box-sizing:border-box;
     display:flex;
     flex-direction:column;
     justify-content:space-between;
   }
 
-  .header{
+  .center{
     text-align:center;
   }
 
   .logo{
-    max-height:80px;
-    margin-bottom:10px;
+    max-width:100%;
+    max-height:60px;
+    object-fit:contain;
+    margin-bottom:5px;
   }
 
   .empresa{
-    font-size:28px;
+    font-size:14px;
     font-weight:bold;
   }
 
   .producto{
-    text-align:center;
-    margin-top:10px;
+    margin-top:8px;
   }
 
   .producto h1{
-    font-size:38px;
+    font-size:20px;
     margin:0;
   }
 
   .producto h2{
-    font-size:26px;
+    font-size:16px;
     margin:0;
   }
 
   .info{
-    margin-top:15px;
-    font-size:22px;
+    font-size:14px;
+    margin-top:10px;
   }
 
-  .info div{
-    margin:5px 0;
+  .line{
+    border-top:1px dashed #000;
+    margin:6px 0;
   }
 
   .footer{
-    font-size:18px;
+    font-size:12px;
     text-align:center;
-    margin-top:10px;
-  }
-
-  .barra{
-    height:10px;
-    background:#0a7a3b;
-    margin-top:10px;
   }
 
   @media print {
@@ -78,43 +71,47 @@
     }
   }
 </style>
+
 </head>
 
 <body>
 
-<div class="etiqueta">
+<div class="ticket">
 
-  <div class="header">
-    <!-- CAMBIA ESTE SRC POR TU LOGO -->
+  <div class="center">
     <img src="TU_LOGO_AQUI.png" class="logo">
     <div class="empresa">CARNES Y VÍSCERAS DEL CENTRO</div>
   </div>
 
-  <div class="producto">
+  <div class="producto center">
     <h1>CAJA DE MENUDO</h1>
     <h2>VÍSCERAS DEL CENTRO</h2>
   </div>
 
   <div class="info">
-    <div><strong>PESO NETO:</strong> 20 KG</div>
+    <div class="line"></div>
+
+    <div><strong>PESO:</strong> 20 KG</div>
     <div><strong>FECHA:</strong> <span id="fecha"></span></div>
-    <div><strong>LOTE:</strong> __________________</div>
-    <div><strong>CONSERVAR:</strong> CONGELADO ❄️</div>
+    <div><strong>LOTE:</strong> __________</div>
+    <div><strong>CONSERVAR:</strong> CONGELADO</div>
     <div><strong>COD:</strong> VDC-MEN-001</div>
+
+    <div class="line"></div>
   </div>
 
   <div class="footer">
-    ✔ Calidad garantizada &nbsp;&nbsp; ✔ Producto seleccionado &nbsp;&nbsp; ✔ Venta mayorista
+    ✔ Calidad garantizada <br>
+    ✔ Producto seleccionado <br>
+    ✔ Venta mayorista
   </div>
-
-  <div class="barra"></div>
 
 </div>
 
 <script>
   const hoy = new Date();
-  const fechaFormateada = hoy.toLocaleDateString('es-MX');
-  document.getElementById("fecha").textContent = fechaFormateada;
+  const fecha = hoy.toLocaleDateString('es-MX');
+  document.getElementById("fecha").textContent = fecha;
 </script>
 
 </body>
