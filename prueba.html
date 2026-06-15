@@ -61,8 +61,8 @@
   }
 
   .logo{
-    max-width:58mm;
-    max-height:38mm;
+    max-width:62mm;
+    max-height:42mm;
     object-fit:contain;
     margin-bottom:2mm;
   }
@@ -90,6 +90,11 @@
     line-height:1;
     font-weight:900;
     letter-spacing:.5px;
+  }
+
+  .producto h1.tripa{
+    font-size:42px;
+    line-height:1.05;
   }
 
   .producto h2{
@@ -149,6 +154,7 @@
   <select id="selectorProducto" onchange="cambiarProducto()">
     <option value="menudo">Menudo</option>
     <option value="libro">Libro</option>
+    <option value="tripa">Tripa Delgada</option>
   </select>
 
   <button onclick="window.print()">Imprimir</button>
@@ -166,11 +172,25 @@
   </div>
 
   <div class="info">
-    <div class="peso">20 KG</div>
-    <div><strong>FECHA:</strong> <span id="fecha"></span></div>
-    <div class="lote"><strong>LOTE:</strong> __________</div>
-    <div><strong>COD:</strong> <span id="codigoProducto">VDC-MEN-001</span></div>
-    <div class="congelado"><strong>CONSERVAR CONGELADO</strong></div>
+    <div class="peso" id="filaPeso">20 KG</div>
+
+    <div>
+      <strong>FECHA:</strong>
+      <span id="fecha"></span>
+    </div>
+
+    <div class="lote" id="filaLote">
+      <strong>LOTE:</strong> __________
+    </div>
+
+    <div id="filaCodigo">
+      <strong>COD:</strong>
+      <span id="codigoProducto">VDC-MEN-001</span>
+    </div>
+
+    <div class="congelado">
+      <strong>CONSERVAR CONGELADO</strong>
+    </div>
   </div>
 </div>
 
@@ -184,14 +204,37 @@
     const nombre = document.getElementById("nombreProducto");
     const codigo = document.getElementById("codigoProducto");
 
+    const filaPeso = document.getElementById("filaPeso");
+    const filaLote = document.getElementById("filaLote");
+    const filaCodigo = document.getElementById("filaCodigo");
+
+    nombre.classList.remove("tripa");
+
     if(producto === "menudo"){
       nombre.textContent = "CAJA DE MENUDO";
       codigo.textContent = "VDC-MEN-001";
+
+      filaPeso.style.display = "";
+      filaLote.style.display = "";
+      filaCodigo.style.display = "";
     }
 
     if(producto === "libro"){
       nombre.textContent = "CAJA DE LIBRO";
       codigo.textContent = "VDC-LIB-001";
+
+      filaPeso.style.display = "";
+      filaLote.style.display = "";
+      filaCodigo.style.display = "";
+    }
+
+    if(producto === "tripa"){
+      nombre.textContent = "TRIPA DELGADA";
+      nombre.classList.add("tripa");
+
+      filaPeso.style.display = "none";
+      filaLote.style.display = "none";
+      filaCodigo.style.display = "none";
     }
   }
 </script>
