@@ -155,6 +155,7 @@
     <option value="menudo">Menudo</option>
     <option value="libro">Libro</option>
     <option value="tripa">Tripa Delgada</option>
+    <option value="cuajo">Cuajo</option>
   </select>
 
   <button onclick="window.print()">Imprimir</button>
@@ -230,6 +231,15 @@
 
     if(producto === "tripa"){
       nombre.textContent = "TRIPA DELGADA";
+      nombre.classList.add("tripa");
+
+      filaPeso.style.display = "none";
+      filaLote.style.display = "none";
+      filaCodigo.style.display = "none";
+    }
+
+    if(producto === "cuajo"){
+      nombre.textContent = "CUAJO";
       nombre.classList.add("tripa");
 
       filaPeso.style.display = "none";
