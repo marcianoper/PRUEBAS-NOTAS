@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
 <meta charset="UTF-8">
 <title>Etiqueta CVC 200x80mm</title>
 
@@ -155,6 +154,7 @@
     <option value="menudo">Menudo</option>
     <option value="libro">Libro</option>
     <option value="tripa">Tripa Delgada</option>
+    <option value="teleco">TELECO</option>
     <option value="cuajo">Cuajo</option>
   </select>
 
@@ -231,6 +231,14 @@
 
     if(producto === "tripa"){
       nombre.textContent = "TRIPA DELGADA";
+      nombre.classList.add("tripa");
+
+      filaPeso.style.display = "none";
+      filaLote.style.display = "none";
+      filaCodigo.style.display = "none";
+    }
+    if(producto === "teleco"){
+      nombre.textContent = "TELECO";
       nombre.classList.add("tripa");
 
       filaPeso.style.display = "none";
