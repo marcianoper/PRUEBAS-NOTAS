@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+<head>
 <meta charset="UTF-8">
 <title>Etiqueta CVC 200x80mm</title>
 
@@ -45,32 +46,36 @@
     padding:6mm 8mm;
     border:2px solid #000;
     display:grid;
-    grid-template-columns: 62mm 1fr 55mm;
+    grid-template-columns: 68mm 1fr 49mm;
     gap:5mm;
     overflow:hidden;
     position:relative;
   }
 
-  .bloque-logo{
+  
+.bloque-logo{
     display:flex;
     flex-direction:column;
-    justify-content:center;
+    justify-content:space-between;
     align-items:center;
-    text-align:center;
+    height:100%;
+    padding:2mm 0;
   }
 
   .logo{
-    max-width:62mm;
-    max-height:42mm;
+    width:60mm;
+    height:56mm;
     object-fit:contain;
-    margin-bottom:2mm;
+    display:block;
   }
 
   .empresa{
-    font-size:14px;
+    font-size:10px;
     font-weight:900;
     text-transform:uppercase;
-    line-height:1.15;
+    text-align:center;
+    line-height:1.05;
+    letter-spacing:.4px;
   }
 
   .producto{
@@ -154,7 +159,6 @@
     <option value="menudo">Menudo</option>
     <option value="libro">Libro</option>
     <option value="tripa">Tripa Delgada</option>
-    <option value="teleco">TELECO</option>
     <option value="cuajo">Cuajo</option>
   </select>
 
@@ -236,15 +240,7 @@
       filaPeso.style.display = "none";
       filaLote.style.display = "none";
       filaCodigo.style.display = "none";
-    }
-    if(producto === "teleco"){
-      nombre.textContent = "TELECO";
-      nombre.classList.add("tripa");
 
-      filaPeso.style.display = "none";
-      filaLote.style.display = "none";
-      filaCodigo.style.display = "none";
-    }
 
     if(producto === "cuajo"){
       nombre.textContent = "CUAJO";
@@ -253,6 +249,7 @@
       filaPeso.style.display = "none";
       filaLote.style.display = "none";
       filaCodigo.style.display = "none";
+    }
     }
   }
 </script>
