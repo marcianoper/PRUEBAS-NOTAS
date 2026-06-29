@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Etiqueta CVC 200x80mm</title>
+
+<style>
+  @page{
+    size: 200mm 80mm;
+    margin: 0;
+  }
+
+  *{ box-sizing:border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    width:200mm;
+    height:80mm;
+    background:#fff;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .controles{
+    position:fixed;
+    top:10px;
+    left:10px;
+    z-index:10;
+    background:#fff;
+    padding:8px 10px;
+    border:1px solid #000;
+    border-radius:8px;
+    font-size:14px;
+  }
+
+  .controles select,
+  .controles button{
+    font-size:14px;
+    padding:5px 8px;
+    font-weight:700;
+  }
+
+  .etiqueta{
+    width:200mm;
+    height:80mm;
+    padding:6mm 8mm;
+    border:2px solid #000;
+    display:grid;
+    grid-template-columns: 68mm 1fr 49mm;
+    gap:5mm;
+    overflow:hidden;
+    position:relative;
+  }
+
+  
+.bloque-logo{
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    align-items:center;
+    height:100%;
+    padding:2mm 0;
+  }
+
+  .logo{
+    width:60mm;
+    height:56mm;
+    object-fit:contain;
+    display:block;
+  }
+
+  .empresa{
+    font-size:10px;
+    font-weight:900;
+    text-transform:uppercase;
+    text-align:center;
+    line-height:1.05;
+    letter-spacing:.4px;
+  }
+
+  .producto{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    text-align:center;
+    border-left:2px solid #000;
+    border-right:2px solid #000;
+    padding:0 5mm;
+  }
+
+  .producto h1{
+    margin:0;
+    font-size:31px;
+    line-height:1;
+    font-weight:900;
+    letter-spacing:.5px;
+  }
+
+  .producto h1.tripa{
+    font-size:42px;
+    line-height:1.05;
+  }
+
+  .producto h2{
+    margin:4mm 0 0;
+    font-size:20px;
+    line-height:1;
+    font-weight:900;
+  }
+
+  .info{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    font-size:15px;
+    line-height:1.45;
+    font-weight:700;
+  }
+
+  .peso{
+    font-size:24px;
+    font-weight:900;
+    margin-bottom:2mm;
+  }
+
+  .lote{ margin-top:1mm; }
+
+  .congelado{
+    margin-top:2mm;
+    border-top:1px dashed #000;
+    padding-top:2mm;
+    font-size:13px;
+  }
+
+  @media print{
+    .controles{
+      display:none;
+    }
+
+    html, body{
+      width:200mm;
+      height:80mm;
+      overflow:hidden;
+    }
+
+    .etiqueta{
+      page-break-after:avoid;
+      page-break-inside:avoid;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="controles">
+  Producto:
+  <select id="selectorProducto" onchange="cambiarProducto()">
+    <option value="menudo">Menudo</option>
+    <option value="libro">Libro</option>
+    <option value="tripa">Tripa Delgada</option>
+    <option value="cuajo">Cuajo</option>
+  </select>
+
+  <button onclick="window.print()">Imprimir</button>
+</div>
+
+<div class="etiqueta">
+  <div class="bloque-logo">
+    <img src="logo.png" class="logo">
+    <div class="empresa">Carnes y Vísceras del Centro</div>
+  </div>
+
+  <div class="producto">
+    <h1 id="nombreProducto">CAJA DE MENUDO</h1>
+    <h2>VÍSCERAS DEL CENTRO</h2>
+  </div>
+
+  <div class="info">
+    <div class="peso" id="filaPeso">20 KG</div>
+
+    <div>
+      <strong>FECHA:</strong>
+      <span id="fecha"></span>
+    </div>
+
+    <div class="lote" id="filaLote">
+      <strong>LOTE:</strong> __________
+    </div>
+
+    <div id="filaCodigo">
+      <strong>COD:</strong>
+      <span id="codigoProducto">VDC-MEN-001</span>
+    </div>
+
+    <div class="congelado">
+      <strong>CONSERVAR CONGELADO</strong>
+    </div>
+  </div>
+</div>
+
+<script>
+  const hoy = new Date();
+  document.getElementById("fecha").textContent =
+    hoy.toLocaleDateString("es-MX");
+
+  function cambiarProducto(){
+    const producto = document.getElementById("selectorProducto").value;
+    const nombre = document.getElementById("nombreProducto");
+    const codigo = document.getElementById("codigoProducto");
+
+    const filaPeso = document.getElementById("filaPeso");
+    const filaLote = document.getElementById("filaLote");
+    const filaCodigo = document.getElementById("filaCodigo");
+
+    nombre.classList.remove("tripa");
+
+    if(producto === "menudo"){
+      nombre.textContent = "CAJA DE MENUDO";
+      codigo.textContent = "VDC-MEN-001";
+
+      filaPeso.style.display = "";
+      filaLote.style.display = "";
+      filaCodigo.style.display = "";
+    }
+
+    if(producto === "libro"){
+      nombre.textContent = "CAJA DE LIBRO";
+      codigo.textContent = "VDC-LIB-001";
+
+      filaPeso.style.display = "";
+      filaLote.style.display = "";
+      filaCodigo.style.display = "";
+    }
+
+    if(producto === "tripa"){
+      nombre.textContent = "TRIPA DELGADA";
+      nombre.classList.add("tripa");
+
+      filaPeso.style.display = "none";
+      filaLote.style.display = "none";
+      filaCodigo.style.display = "none";
+
+
+    if(producto === "cuajo"){
+      nombre.textContent = "CUAJO";
+      nombre.classList.add("tripa");
+
+      filaPeso.style.display = "none";
+      filaLote.style.display = "none";
+      filaCodigo.style.display = "none";
+    }
+    }
+  }
+</script>
+
+</body>
+</html>
