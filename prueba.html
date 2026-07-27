@@ -2,7 +2,9 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Etiqueta CVC 200x80mm</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Etiquetas CVC 200x80mm</title>
 
 <style>
   @page{
@@ -10,142 +12,246 @@
     margin: 0;
   }
 
-  *{ box-sizing:border-box; }
+  *{
+    box-sizing: border-box;
+  }
 
-  html, body{
-    margin:0;
-    padding:0;
-    width:200mm;
-    height:80mm;
-    background:#fff;
+  html,
+  body{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100%;
+    background: #f1f1f1;
     font-family: Arial, Helvetica, sans-serif;
   }
 
   .controles{
-    position:fixed;
-    top:10px;
-    left:10px;
-    z-index:10;
-    background:#fff;
-    padding:8px 10px;
-    border:1px solid #000;
-    border-radius:8px;
-    font-size:14px;
+    width: min(900px, calc(100% - 24px));
+    margin: 12px auto;
+    background: #fff;
+    padding: 14px;
+    border: 1px solid #222;
+    border-radius: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 10px;
   }
 
-  .controles select,
+  .campo{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .campo label{
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .campo select,
+  .campo input,
   .controles button{
-    font-size:14px;
-    padding:5px 8px;
-    font-weight:700;
+    min-height: 40px;
+    font-size: 15px;
+    padding: 7px 10px;
+    font-weight: 700;
+    border: 1px solid #555;
+    border-radius: 6px;
+  }
+
+  .campo input{
+    min-width: 170px;
+  }
+
+  .campo-producto-libre{
+    display: none;
+  }
+
+  .campo-producto-libre.visible{
+    display: flex;
+  }
+
+  .controles button{
+    cursor: pointer;
+    background: #0a7a3b;
+    color: #fff;
+    border-color: #0a7a3b;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .controles button:hover{
+    background: #075f2e;
+  }
+
+  .vista-previa{
+    width: 100%;
+    overflow: auto;
+    padding: 10px 0 24px;
   }
 
   .etiqueta{
-    width:200mm;
-    height:80mm;
-    padding:6mm 8mm;
-    border:2px solid #000;
-    display:grid;
+    width: 200mm;
+    height: 80mm;
+    margin: 0 auto;
+    padding: 6mm 8mm;
+    border: 2px solid #000;
+    display: grid;
     grid-template-columns: 68mm 1fr 49mm;
-    gap:5mm;
-    overflow:hidden;
-    position:relative;
+    gap: 5mm;
+    overflow: hidden;
+    position: relative;
+    background: #fff;
   }
 
-  
-.bloque-logo{
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-    align-items:center;
-    height:100%;
-    padding:2mm 0;
+  .bloque-logo{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    padding: 2mm 0;
   }
 
   .logo{
-    width:60mm;
-    height:56mm;
-    object-fit:contain;
-    display:block;
+    width: 60mm;
+    height: 56mm;
+    object-fit: contain;
+    display: block;
   }
 
   .empresa{
-    font-size:10px;
-    font-weight:900;
-    text-transform:uppercase;
-    text-align:center;
-    line-height:1.05;
-    letter-spacing:.4px;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.05;
+    letter-spacing: .4px;
   }
 
   .producto{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    text-align:center;
-    border-left:2px solid #000;
-    border-right:2px solid #000;
-    padding:0 5mm;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    border-left: 2px solid #000;
+    border-right: 2px solid #000;
+    padding: 0 5mm;
+    overflow: hidden;
   }
 
   .producto h1{
-    margin:0;
-    font-size:31px;
-    line-height:1;
-    font-weight:900;
-    letter-spacing:.5px;
+    margin: 0;
+    font-size: 31px;
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: .5px;
+    overflow-wrap: anywhere;
   }
 
-  .producto h1.tripa{
-    font-size:42px;
-    line-height:1.05;
+  .producto h1.nombre-corto{
+    font-size: 42px;
+    line-height: 1.05;
+  }
+
+  .producto h1.nombre-largo{
+    font-size: 25px;
+    line-height: 1.05;
+  }
+
+  .producto h1.nombre-muy-largo{
+    font-size: 21px;
+    line-height: 1.05;
   }
 
   .producto h2{
-    margin:4mm 0 0;
-    font-size:20px;
-    line-height:1;
-    font-weight:900;
+    margin: 4mm 0 0;
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 900;
   }
 
   .info{
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    font-size:15px;
-    line-height:1.45;
-    font-weight:700;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 15px;
+    line-height: 1.45;
+    font-weight: 700;
   }
 
   .peso{
-    font-size:24px;
-    font-weight:900;
-    margin-bottom:2mm;
+    font-size: 24px;
+    font-weight: 900;
+    margin-bottom: 2mm;
   }
 
-  .lote{ margin-top:1mm; }
+  .lote{
+    margin-top: 1mm;
+  }
+
+  .dato{
+    font-weight: 900;
+    overflow-wrap: anywhere;
+  }
 
   .congelado{
-    margin-top:2mm;
-    border-top:1px dashed #000;
-    padding-top:2mm;
-    font-size:13px;
+    margin-top: 2mm;
+    border-top: 1px dashed #000;
+    padding-top: 2mm;
+    font-size: 13px;
+  }
+
+  @media(max-width: 820px){
+    .vista-previa{
+      transform-origin: top left;
+    }
+
+    .controles{
+      align-items: stretch;
+    }
+
+    .campo{
+      flex: 1 1 170px;
+    }
+
+    .campo input,
+    .campo select{
+      width: 100%;
+      min-width: 0;
+    }
+
+    .controles button{
+      width: 100%;
+    }
   }
 
   @media print{
-    .controles{
-      display:none;
+    html,
+    body{
+      width: 200mm;
+      height: 80mm;
+      overflow: hidden;
+      background: #fff;
     }
 
-    html, body{
-      width:200mm;
-      height:80mm;
-      overflow:hidden;
+    .controles{
+      display: none !important;
+    }
+
+    .vista-previa{
+      padding: 0;
+      margin: 0;
+      overflow: hidden;
     }
 
     .etiqueta{
-      page-break-after:avoid;
-      page-break-inside:avoid;
+      margin: 0;
+      page-break-after: avoid;
+      page-break-inside: avoid;
     }
   }
 </style>
@@ -154,104 +260,356 @@
 <body>
 
 <div class="controles">
-  Producto:
-  <select id="selectorProducto" onchange="cambiarProducto()">
-    <option value="menudo">Menudo</option>
-    <option value="libro">Libro</option>
-    <option value="tripa">Tripa Delgada</option>
-    <option value="cuajo">Cuajo</option>
-  </select>
 
-  <button onclick="window.print()">Imprimir</button>
+  <div class="campo">
+    <label for="selectorProducto">Tipo de etiqueta</label>
+
+    <select id="selectorProducto">
+      <option value="menudo">Menudo</option>
+      <option value="libro">Libro</option>
+      <option value="tripa">Tripa delgada</option>
+      <option value="cuajo">Cuajo</option>
+      <option value="libre">Nota libre</option>
+    </select>
+  </div>
+
+  <div class="campo campo-producto-libre" id="campoProductoLibre">
+    <label for="productoLibre">Nombre del producto</label>
+
+    <input
+      type="text"
+      id="productoLibre"
+      placeholder="Ej. Corazón de res"
+      maxlength="40"
+    >
+  </div>
+
+  <div class="campo">
+    <label for="entradaFecha">Fecha</label>
+
+    <input type="date" id="entradaFecha">
+  </div>
+
+  <div class="campo">
+    <label for="entradaLote">Lote</label>
+
+    <input
+      type="text"
+      id="entradaLote"
+      placeholder="Ej. LOTE-270726"
+      maxlength="30"
+    >
+  </div>
+
+  <div class="campo" id="campoCodigo">
+    <label for="entradaCodigo">Código</label>
+
+    <input
+      type="text"
+      id="entradaCodigo"
+      placeholder="Ej. VDC-MEN-001"
+      maxlength="30"
+    >
+  </div>
+
+  <button type="button" id="botonImprimir">
+    Imprimir
+  </button>
+
 </div>
 
-<div class="etiqueta">
-  <div class="bloque-logo">
-    <img src="logo_recortado.png" class="logo">
-    <div class="empresa">Carnes y Vísceras del Centro</div>
+<div class="vista-previa">
+
+  <div class="etiqueta">
+
+    <div class="bloque-logo">
+      <img
+        src="logo_recortado.png"
+        class="logo"
+        alt="Logo Carnes y Vísceras del Centro"
+      >
+
+      <div class="empresa">
+        Carnes y Vísceras del Centro
+      </div>
+    </div>
+
+    <div class="producto">
+      <h1 id="nombreProducto">CAJA DE MENUDO</h1>
+      <h2>VÍSCERAS DEL CENTRO</h2>
+    </div>
+
+    <div class="info">
+
+      <div class="peso" id="filaPeso">
+        20 KG
+      </div>
+
+      <div>
+        <strong>FECHA:</strong>
+        <span class="dato" id="fechaImpresion"></span>
+      </div>
+
+      <div class="lote" id="filaLote">
+        <strong>LOTE:</strong>
+        <span class="dato" id="loteImpresion">__________</span>
+      </div>
+
+      <div id="filaCodigo">
+        <strong>COD:</strong>
+        <span class="dato" id="codigoProducto">VDC-MEN-001</span>
+      </div>
+
+      <div class="congelado">
+        <strong>CONSERVAR CONGELADO</strong>
+      </div>
+
+    </div>
+
   </div>
 
-  <div class="producto">
-    <h1 id="nombreProducto">CAJA DE MENUDO</h1>
-    <h2>VÍSCERAS DEL CENTRO</h2>
-  </div>
-
-  <div class="info">
-    <div class="peso" id="filaPeso">20 KG</div>
-
-    <div>
-      <strong>FECHA:</strong>
-      <span id="fecha"></span>
-    </div>
-
-    <div class="lote" id="filaLote">
-      <strong>LOTE:</strong> __________
-    </div>
-
-    <div id="filaCodigo">
-      <strong>COD:</strong>
-      <span id="codigoProducto">VDC-MEN-001</span>
-    </div>
-
-    <div class="congelado">
-      <strong>CONSERVAR CONGELADO</strong>
-    </div>
-  </div>
 </div>
 
 <script>
-  const hoy = new Date();
-  document.getElementById("fecha").textContent =
-    hoy.toLocaleDateString("es-MX");
+  const productos = {
+    menudo: {
+      nombre: "CAJA DE MENUDO",
+      codigo: "VDC-MEN-001",
+      mostrarPeso: true,
+      mostrarCodigo: true,
+      peso: "20 KG"
+    },
 
-  function cambiarProducto(){
-    const producto = document.getElementById("selectorProducto").value;
-    const nombre = document.getElementById("nombreProducto");
-    const codigo = document.getElementById("codigoProducto");
+    libro: {
+      nombre: "CAJA DE LIBRO",
+      codigo: "VDC-LIB-001",
+      mostrarPeso: true,
+      mostrarCodigo: true,
+      peso: "20 KG"
+    },
 
-    const filaPeso = document.getElementById("filaPeso");
-    const filaLote = document.getElementById("filaLote");
-    const filaCodigo = document.getElementById("filaCodigo");
+    tripa: {
+      nombre: "TRIPA DELGADA",
+      codigo: "",
+      mostrarPeso: false,
+      mostrarCodigo: false,
+      peso: ""
+    },
 
-    nombre.classList.remove("tripa");
+    cuajo: {
+      nombre: "CUAJO",
+      codigo: "",
+      mostrarPeso: false,
+      mostrarCodigo: false,
+      peso: ""
+    },
 
-    if(producto === "menudo"){
-      nombre.textContent = "CAJA DE MENUDO";
-      codigo.textContent = "VDC-MEN-001";
+    libre: {
+      nombre: "PRODUCTO",
+      codigo: "",
+      mostrarPeso: false,
+      mostrarCodigo: true,
+      peso: ""
+    }
+  };
 
-      filaPeso.style.display = "";
-      filaLote.style.display = "";
-      filaCodigo.style.display = "";
+  const selectorProducto =
+    document.getElementById("selectorProducto");
+
+  const campoProductoLibre =
+    document.getElementById("campoProductoLibre");
+
+  const productoLibre =
+    document.getElementById("productoLibre");
+
+  const entradaFecha =
+    document.getElementById("entradaFecha");
+
+  const entradaLote =
+    document.getElementById("entradaLote");
+
+  const entradaCodigo =
+    document.getElementById("entradaCodigo");
+
+  const campoCodigo =
+    document.getElementById("campoCodigo");
+
+  const nombreProducto =
+    document.getElementById("nombreProducto");
+
+  const fechaImpresion =
+    document.getElementById("fechaImpresion");
+
+  const loteImpresion =
+    document.getElementById("loteImpresion");
+
+  const codigoProducto =
+    document.getElementById("codigoProducto");
+
+  const filaPeso =
+    document.getElementById("filaPeso");
+
+  const filaLote =
+    document.getElementById("filaLote");
+
+  const filaCodigo =
+    document.getElementById("filaCodigo");
+
+  const botonImprimir =
+    document.getElementById("botonImprimir");
+
+  function obtenerFechaLocal(){
+    const hoy = new Date();
+
+    const anio = hoy.getFullYear();
+    const mes = String(hoy.getMonth() + 1).padStart(2, "0");
+    const dia = String(hoy.getDate()).padStart(2, "0");
+
+    return `${anio}-${mes}-${dia}`;
+  }
+
+  function formatearFecha(fechaISO){
+    if(!fechaISO){
+      return "";
     }
 
-    if(producto === "libro"){
-      nombre.textContent = "CAJA DE LIBRO";
-      codigo.textContent = "VDC-LIB-001";
+    const partes = fechaISO.split("-");
 
-      filaPeso.style.display = "";
-      filaLote.style.display = "";
-      filaCodigo.style.display = "";
+    if(partes.length !== 3){
+      return fechaISO;
     }
 
-    if(producto === "tripa"){
-      nombre.textContent = "TRIPA DELGADA";
-      nombre.classList.add("tripa");
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+  }
 
-      filaPeso.style.display = "none";
-      filaLote.style.display = "none";
-      filaCodigo.style.display = "none";
+  function ajustarTamanoNombre(){
+    const texto = nombreProducto.textContent.trim();
 
+    nombreProducto.classList.remove(
+      "nombre-corto",
+      "nombre-largo",
+      "nombre-muy-largo"
+    );
 
-    if(producto === "cuajo"){
-      nombre.textContent = "CUAJO";
-      nombre.classList.add("tripa");
-
-      filaPeso.style.display = "none";
-      filaLote.style.display = "none";
-      filaCodigo.style.display = "none";
-    }
+    if(texto.length <= 12){
+      nombreProducto.classList.add("nombre-corto");
+    }else if(texto.length >= 25 && texto.length <= 32){
+      nombreProducto.classList.add("nombre-largo");
+    }else if(texto.length > 32){
+      nombreProducto.classList.add("nombre-muy-largo");
     }
   }
+
+  function actualizarFecha(){
+    fechaImpresion.textContent =
+      formatearFecha(entradaFecha.value);
+  }
+
+  function actualizarLote(){
+    const lote = entradaLote.value.trim();
+
+    loteImpresion.textContent =
+      lote || "__________";
+  }
+
+  function actualizarCodigo(){
+    const codigo = entradaCodigo.value.trim();
+
+    codigoProducto.textContent =
+      codigo || "SIN CÓDIGO";
+  }
+
+  function actualizarProductoLibre(){
+    if(selectorProducto.value !== "libre"){
+      return;
+    }
+
+    const texto = productoLibre.value.trim();
+
+    nombreProducto.textContent =
+      texto ? texto.toUpperCase() : "PRODUCTO";
+
+    ajustarTamanoNombre();
+  }
+
+  function cambiarProducto(){
+    const tipo = selectorProducto.value;
+    const configuracion = productos[tipo];
+
+    nombreProducto.textContent = configuracion.nombre;
+
+    filaPeso.textContent = configuracion.peso;
+
+    filaPeso.style.display =
+      configuracion.mostrarPeso ? "" : "none";
+
+    filaLote.style.display = "";
+
+    filaCodigo.style.display =
+      configuracion.mostrarCodigo ? "" : "none";
+
+    campoProductoLibre.classList.toggle(
+      "visible",
+      tipo === "libre"
+    );
+
+    /*
+      En la nota libre se permite capturar un código,
+      pero no es obligatorio.
+    */
+    campoCodigo.style.display =
+      configuracion.mostrarCodigo ? "flex" : "none";
+
+    if(tipo === "libre"){
+      entradaCodigo.value = "";
+      actualizarProductoLibre();
+    }else{
+      entradaCodigo.value = configuracion.codigo;
+    }
+
+    actualizarCodigo();
+    ajustarTamanoNombre();
+  }
+
+  selectorProducto.addEventListener(
+    "change",
+    cambiarProducto
+  );
+
+  productoLibre.addEventListener(
+    "input",
+    actualizarProductoLibre
+  );
+
+  entradaFecha.addEventListener(
+    "change",
+    actualizarFecha
+  );
+
+  entradaLote.addEventListener(
+    "input",
+    actualizarLote
+  );
+
+  entradaCodigo.addEventListener(
+    "input",
+    actualizarCodigo
+  );
+
+  botonImprimir.addEventListener("click", function(){
+    actualizarFecha();
+    actualizarLote();
+    actualizarCodigo();
+    actualizarProductoLibre();
+
+    window.print();
+  });
+
+  entradaFecha.value = obtenerFechaLocal();
+
+  cambiarProducto();
+  actualizarFecha();
+  actualizarLote();
 </script>
 
 </body>
