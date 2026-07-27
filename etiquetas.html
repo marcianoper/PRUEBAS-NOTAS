@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Etiquetas para Charolas - Carnes y Vísceras del Centro</title>
+
+<style>
+  :root{
+    --verde:#0a7a3b;
+    --verde-oscuro:#075c2d;
+    --fondo:#f3f5f4;
+    --texto:#111827;
+    --linea:#d1d5db;
+  }
+
+  @page{
+    size:80mm 50mm;
+    margin:0;
+  }
+
+  *{
+    box-sizing:border-box;
+  }
+
+  body{
+    margin:0;
+    background:var(--fondo);
+    color:var(--texto);
+    font-family:Arial, Helvetica, sans-serif;
+  }
+
+  .panel{
+    width:min(980px, calc(100% - 24px));
+    margin:14px auto;
+    padding:16px;
+    background:#fff;
+    border:1px solid #dfe3e1;
+    border-radius:18px;
+    box-shadow:0 14px 35px rgba(0,0,0,.08);
+  }
+
+  .panel h1{
+    margin:0 0 4px;
+    font-size:22px;
+  }
+
+  .panel .subtitulo{
+    margin:0 0 16px;
+    color:#6b7280;
+    font-size:13px;
+    font-weight:700;
+  }
+
+  .formulario{
+    display:grid;
+    grid-template-columns:repeat(4, minmax(150px, 1fr));
+    gap:12px;
+  }
+
+  .campo{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+  }
+
+  .campo.doble{
+    grid-column:span 2;
+  }
+
+  label{
+    font-size:12px;
+    font-weight:900;
+    text-transform:uppercase;
+  }
+
+  input,
+  select{
+    width:100%;
+    min-height:44px;
+    border:1px solid var(--linea);
+    border-radius:12px;
+    padding:9px 11px;
+    font-size:16px;
+    font-weight:800;
+    outline:none;
+    background:#fff;
+  }
+
+  input:focus,
+  select:focus{
+    border-color:var(--verde);
+    box-shadow:0 0 0 3px rgba(10,122,59,.12);
+  }
+
+  .total-calculado{
+    background:#ecf8f0;
+    border:2px solid var(--verde);
+    color:var(--verde-oscuro);
+    font-size:22px;
+    font-weight:900;
+    text-align:center;
+  }
+
+  .acciones{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:14px;
+  }
+
+  button{
+    min-height:44px;
+    border:none;
+    border-radius:12px;
+    padding:10px 18px;
+    font-size:15px;
+    font-weight:900;
+    cursor:pointer;
+  }
+
+  .btn-imprimir{
+    background:var(--verde);
+    color:#fff;
+  }
+
+  .btn-imprimir:hover{
+    background:var(--verde-oscuro);
+  }
+
+  .btn-limpiar{
+    background:#111827;
+    color:#fff;
+  }
+
+  .contenedor-previa{
+    width:100%;
+    padding:18px 10px 30px;
+    overflow:auto;
+  }
+
+  .etiqueta{
+    width:80mm;
+    height:50mm;
+    margin:0 auto;
+    background:#fff;
+    border:1.5px solid #000;
+    padding:3mm;
+    display:grid;
+    grid-template-columns:17mm 1fr;
+    grid-template-rows:auto 1fr auto;
+    column-gap:3mm;
+    overflow:hidden;
+  }
+
+  .logo-zona{
+    grid-row:1 / 4;
+    border-right:1px solid #000;
+    padding-right:2mm;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  }
+
+  .logo{
+    width:13mm;
+    height:13mm;
+    object-fit:contain;
+    margin-bottom:1.5mm;
+  }
+
+  .marca{
+    font-size:6.5px;
+    line-height:1.05;
+    font-weight:900;
+    text-transform:uppercase;
+  }
+
+  .producto{
+    min-width:0;
+  }
+
+  .producto h2{
+    margin:0;
+    font-size:17px;
+    line-height:1;
+    font-weight:900;
+    text-transform:uppercase;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .producto .descripcion{
+    margin-top:1mm;
+    font-size:7.5px;
+    font-weight:700;
+    color:#333;
+  }
+
+  .datos{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1.5mm 3mm;
+    align-content:center;
+    margin-top:1mm;
+  }
+
+  .dato{
+    border-bottom:1px solid #777;
+    padding-bottom:.5mm;
+  }
+
+  .dato span{
+    display:block;
+    font-size:6.5px;
+    font-weight:900;
+    text-transform:uppercase;
+  }
+
+  .dato strong{
+    display:block;
+    margin-top:.3mm;
+    font-size:10px;
+    line-height:1;
+  }
+
+  .total-etiqueta{
+    display:flex;
+    justify-content:space-between;
+    align-items:end;
+    border-top:1.5px solid #000;
+    padding-top:1.5mm;
+    margin-top:1mm;
+  }
+
+  .fecha-lote{
+    font-size:6.5px;
+    font-weight:800;
+    line-height:1.35;
+  }
+
+  .precio-total{
+    text-align:right;
+  }
+
+  .precio-total span{
+    display:block;
+    font-size:7px;
+    font-weight:900;
+  }
+
+  .precio-total strong{
+    display:block;
+    font-size:20px;
+    line-height:.95;
+    font-weight:900;
+  }
+
+  @media(max-width:760px){
+    .formulario{
+      grid-template-columns:1fr 1fr;
+    }
+
+    .campo.doble{
+      grid-column:span 2;
+    }
+  }
+
+  @media(max-width:480px){
+    .formulario{
+      grid-template-columns:1fr;
+    }
+
+    .campo.doble{
+      grid-column:span 1;
+    }
+
+    .acciones button{
+      width:100%;
+    }
+  }
+
+  @media print{
+    html,
+    body{
+      width:80mm;
+      height:50mm;
+      margin:0;
+      padding:0;
+      background:#fff;
+      overflow:hidden;
+    }
+
+    .panel{
+      display:none !important;
+    }
+
+    .contenedor-previa{
+      width:80mm;
+      height:50mm;
+      margin:0;
+      padding:0;
+      overflow:hidden;
+    }
+
+    .etiqueta{
+      margin:0;
+      page-break-inside:avoid;
+      page-break-after:avoid;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<section class="panel">
+  <h1>Etiqueta para charolas</h1>
+  <p class="subtitulo">Captura el producto, peso y precio por kilo. El total se calcula automáticamente.</p>
+
+  <div class="formulario">
+
+    <div class="campo doble">
+      <label for="producto">Producto</label>
+      <select id="producto">
+        <option value="Bistec de res">Bistec de res</option>
+        <option value="Carne molida">Carne molida</option>
+        <option value="Costilla de res">Costilla de res</option>
+        <option value="Chuleta">Chuleta</option>
+        <option value="Rib Eye">Rib Eye</option>
+        <option value="Sirloin">Sirloin</option>
+        <option value="Pecho">Pecho</option>
+        <option value="Carne para cocido">Carne para cocido</option>
+        <option value="Carne para deshebrar">Carne para deshebrar</option>
+        <option value="Producto libre">Producto libre</option>
+      </select>
+    </div>
+
+    <div class="campo doble" id="campoLibre" style="display:none">
+      <label for="productoLibre">Nombre del producto</label>
+      <input id="productoLibre" type="text" maxlength="36" placeholder="Ej. Aguayón de res">
+    </div>
+
+    <div class="campo">
+      <label for="kilos">Peso en kilogramos</label>
+      <input id="kilos" type="number" min="0" step="0.001" inputmode="decimal" placeholder="0.000">
+    </div>
+
+    <div class="campo">
+      <label for="precioKg">Precio por kilo</label>
+      <input id="precioKg" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
+    </div>
+
+    <div class="campo">
+      <label for="total">Total</label>
+      <input id="total" class="total-calculado" type="text" value="$0.00" readonly>
+    </div>
+
+    <div class="campo">
+      <label for="fecha">Fecha</label>
+      <input id="fecha" type="date">
+    </div>
+
+    <div class="campo">
+      <label for="lote">Lote</label>
+      <input id="lote" type="text" maxlength="24" placeholder="Ej. CVC-270726">
+    </div>
+
+    <div class="campo">
+      <label for="codigo">Código</label>
+      <input id="codigo" type="text" maxlength="24" placeholder="Ej. CAR-001">
+    </div>
+
+    <div class="campo doble">
+      <label for="descripcion">Descripción corta</label>
+      <input id="descripcion" type="text" maxlength="55" value="Producto fresco · Mantener refrigerado">
+    </div>
+
+  </div>
+
+  <div class="acciones">
+    <button class="btn-imprimir" type="button" onclick="imprimirEtiqueta()">Imprimir etiqueta</button>
+    <button class="btn-limpiar" type="button" onclick="limpiarCampos()">Nueva etiqueta</button>
+  </div>
+</section>
+
+<div class="contenedor-previa">
+  <div class="etiqueta">
+
+    <div class="logo-zona">
+      <img src="logo_recortado.png" class="logo" alt="Logo CVC">
+      <div class="marca">Carnes y Vísceras del Centro</div>
+    </div>
+
+    <div class="producto">
+      <h2 id="vistaProducto">BISTEC DE RES</h2>
+      <div class="descripcion" id="vistaDescripcion">Producto fresco · Mantener refrigerado</div>
+    </div>
+
+    <div class="datos">
+      <div class="dato">
+        <span>Peso neto</span>
+        <strong id="vistaKilos">0.000 kg</strong>
+      </div>
+
+      <div class="dato">
+        <span>Precio por kg</span>
+        <strong id="vistaPrecioKg">$0.00</strong>
+      </div>
+    </div>
+
+    <div class="total-etiqueta">
+      <div class="fecha-lote">
+        <div>FECHA: <span id="vistaFecha"></span></div>
+        <div>LOTE: <span id="vistaLote">—</span></div>
+        <div>COD: <span id="vistaCodigo">—</span></div>
+      </div>
+
+      <div class="precio-total">
+        <span>TOTAL</span>
+        <strong id="vistaTotal">$0.00</strong>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const precios = {
+    "Bistec de res": 250,
+    "Carne molida": 250,
+    "Costilla de res": 200,
+    "Chuleta": 250,
+    "Rib Eye": 410,
+    "Sirloin": 270,
+    "Pecho": 250,
+    "Carne para cocido": 250,
+    "Carne para deshebrar": 250
+  };
+
+  const producto = document.getElementById("producto");
+  const campoLibre = document.getElementById("campoLibre");
+  const productoLibre = document.getElementById("productoLibre");
+  const kilos = document.getElementById("kilos");
+  const precioKg = document.getElementById("precioKg");
+  const total = document.getElementById("total");
+  const fecha = document.getElementById("fecha");
+  const lote = document.getElementById("lote");
+  const codigo = document.getElementById("codigo");
+  const descripcion = document.getElementById("descripcion");
+
+  function fechaLocalISO(){
+    const ahora = new Date();
+    const ajuste = ahora.getTimezoneOffset() * 60000;
+    return new Date(ahora.getTime() - ajuste).toISOString().slice(0,10);
+  }
+
+  function formatoDinero(numero){
+    return new Intl.NumberFormat("es-MX", {
+      style:"currency",
+      currency:"MXN",
+      minimumFractionDigits:2
+    }).format(numero || 0);
+  }
+
+  function formatoFecha(valor){
+    if(!valor) return "";
+    const [anio, mes, dia] = valor.split("-");
+    return `${dia}/${mes}/${anio}`;
+  }
+
+  function obtenerNombreProducto(){
+    if(producto.value === "Producto libre"){
+      return productoLibre.value.trim() || "PRODUCTO";
+    }
+    return producto.value;
+  }
+
+  function recalcular(){
+    const kg = Number(kilos.value) || 0;
+    const precio = Number(precioKg.value) || 0;
+    const importe = kg * precio;
+
+    total.value = formatoDinero(importe);
+
+    document.getElementById("vistaProducto").textContent =
+      obtenerNombreProducto().toUpperCase();
+
+    document.getElementById("vistaDescripcion").textContent =
+      descripcion.value.trim() || "Producto fresco";
+
+    document.getElementById("vistaKilos").textContent =
+      `${kg.toFixed(3)} kg`;
+
+    document.getElementById("vistaPrecioKg").textContent =
+      formatoDinero(precio);
+
+    document.getElementById("vistaTotal").textContent =
+      formatoDinero(importe);
+
+    document.getElementById("vistaFecha").textContent =
+      formatoFecha(fecha.value);
+
+    document.getElementById("vistaLote").textContent =
+      lote.value.trim() || "—";
+
+    document.getElementById("vistaCodigo").textContent =
+      codigo.value.trim() || "—";
+  }
+
+  function cambiarProducto(){
+    const esLibre = producto.value === "Producto libre";
+    campoLibre.style.display = esLibre ? "flex" : "none";
+
+    if(!esLibre && precios[producto.value] !== undefined){
+      precioKg.value = precios[producto.value].toFixed(2);
+    }
+
+    recalcular();
+  }
+
+  function imprimirEtiqueta(){
+    recalcular();
+
+    if(!obtenerNombreProducto().trim()){
+      alert("Escribe el nombre del producto.");
+      return;
+    }
+
+    if(!(Number(kilos.value) > 0)){
+      alert("Captura un peso mayor a cero.");
+      kilos.focus();
+      return;
+    }
+
+    if(!(Number(precioKg.value) > 0)){
+      alert("Captura el precio por kilo.");
+      precioKg.focus();
+      return;
+    }
+
+    window.print();
+  }
+
+  function limpiarCampos(){
+    kilos.value = "";
+    lote.value = "";
+    codigo.value = "";
+    productoLibre.value = "";
+    fecha.value = fechaLocalISO();
+    producto.value = "Bistec de res";
+    descripcion.value = "Producto fresco · Mantener refrigerado";
+    cambiarProducto();
+    kilos.focus();
+  }
+
+  [
+    productoLibre,
+    kilos,
+    precioKg,
+    fecha,
+    lote,
+    codigo,
+    descripcion
+  ].forEach(elemento => {
+    elemento.addEventListener("input", recalcular);
+    elemento.addEventListener("change", recalcular);
+  });
+
+  producto.addEventListener("change", cambiarProducto);
+
+  fecha.value = fechaLocalISO();
+  cambiarProducto();
+</script>
+
+</body>
+</html>
