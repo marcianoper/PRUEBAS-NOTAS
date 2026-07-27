@@ -3,19 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Etiquetas para Charolas - Carnes y Vísceras del Centro</title>
+<title>Etiqueta CVC para Charolas 200x80mm</title>
 
 <style>
   :root{
     --verde:#0a7a3b;
     --verde-oscuro:#075c2d;
-    --fondo:#f3f5f4;
-    --texto:#111827;
+    --fondo:#f3f4f6;
     --linea:#d1d5db;
   }
 
   @page{
-    size:80mm 50mm;
+    size:200mm 80mm;
     margin:0;
   }
 
@@ -26,18 +25,18 @@
   body{
     margin:0;
     background:var(--fondo);
-    color:var(--texto);
+    color:#000;
     font-family:Arial, Helvetica, sans-serif;
   }
 
   .panel{
-    width:min(980px, calc(100% - 24px));
+    width:min(1100px, calc(100% - 24px));
     margin:14px auto;
-    padding:16px;
     background:#fff;
-    border:1px solid #dfe3e1;
-    border-radius:18px;
-    box-shadow:0 14px 35px rgba(0,0,0,.08);
+    border:1px solid #ddd;
+    border-radius:16px;
+    padding:16px;
+    box-shadow:0 14px 34px rgba(0,0,0,.08);
   }
 
   .panel h1{
@@ -45,8 +44,8 @@
     font-size:22px;
   }
 
-  .panel .subtitulo{
-    margin:0 0 16px;
+  .panel p{
+    margin:0 0 15px;
     color:#6b7280;
     font-size:13px;
     font-weight:700;
@@ -78,13 +77,13 @@
   select{
     width:100%;
     min-height:44px;
-    border:1px solid var(--linea);
-    border-radius:12px;
     padding:9px 11px;
+    border:1px solid var(--linea);
+    border-radius:11px;
     font-size:16px;
     font-weight:800;
-    outline:none;
     background:#fff;
+    outline:none;
   }
 
   input:focus,
@@ -93,13 +92,13 @@
     box-shadow:0 0 0 3px rgba(10,122,59,.12);
   }
 
-  .total-calculado{
-    background:#ecf8f0;
+  #total{
+    background:#edf8f1;
     border:2px solid var(--verde);
     color:var(--verde-oscuro);
-    font-size:22px;
-    font-weight:900;
+    font-size:21px;
     text-align:center;
+    font-weight:900;
   }
 
   .acciones{
@@ -111,155 +110,191 @@
 
   button{
     min-height:44px;
-    border:none;
-    border-radius:12px;
     padding:10px 18px;
+    border:none;
+    border-radius:11px;
     font-size:15px;
     font-weight:900;
     cursor:pointer;
   }
 
-  .btn-imprimir{
+  .imprimir{
+    color:#fff;
     background:var(--verde);
+  }
+
+  .limpiar{
     color:#fff;
-  }
-
-  .btn-imprimir:hover{
-    background:var(--verde-oscuro);
-  }
-
-  .btn-limpiar{
     background:#111827;
-    color:#fff;
   }
 
-  .contenedor-previa{
+  .vista-previa{
     width:100%;
-    padding:18px 10px 30px;
+    padding:14px 10px 28px;
     overflow:auto;
   }
 
   .etiqueta{
-    width:80mm;
-    height:50mm;
+    width:200mm;
+    height:80mm;
     margin:0 auto;
+    padding:6mm 8mm;
+    border:2px solid #000;
     background:#fff;
-    border:1.5px solid #000;
-    padding:3mm;
     display:grid;
-    grid-template-columns:17mm 1fr;
-    grid-template-rows:auto 1fr auto;
-    column-gap:3mm;
+    grid-template-columns:68mm 1fr 58mm;
+    gap:5mm;
     overflow:hidden;
   }
 
-  .logo-zona{
-    grid-row:1 / 4;
-    border-right:1px solid #000;
-    padding-right:2mm;
+  .bloque-logo{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-between;
+    height:100%;
+    padding:2mm 0;
+  }
+
+  .logo{
+    width:60mm;
+    height:56mm;
+    object-fit:contain;
+    display:block;
+  }
+
+  .empresa{
+    font-size:10px;
+    line-height:1.05;
+    font-weight:900;
+    text-align:center;
+    text-transform:uppercase;
+    letter-spacing:.3px;
+  }
+
+  .producto{
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
     text-align:center;
+    border-left:2px solid #000;
+    border-right:2px solid #000;
+    padding:0 4mm;
+    overflow:hidden;
   }
 
-  .logo{
-    width:13mm;
-    height:13mm;
-    object-fit:contain;
-    margin-bottom:1.5mm;
-  }
-
-  .marca{
-    font-size:6.5px;
-    line-height:1.05;
+  .producto h1{
+    margin:0;
+    max-width:100%;
+    font-size:31px;
+    line-height:.95;
     font-weight:900;
     text-transform:uppercase;
+    overflow-wrap:anywhere;
   }
 
-  .producto{
-    min-width:0;
+  .producto h1.corto{
+    font-size:42px;
+  }
+
+  .producto h1.largo{
+    font-size:25px;
+    line-height:1;
+  }
+
+  .producto h1.muy-largo{
+    font-size:21px;
+    line-height:1;
   }
 
   .producto h2{
-    margin:0;
-    font-size:17px;
+    margin:5mm 0 0;
+    font-size:20px;
     line-height:1;
     font-weight:900;
     text-transform:uppercase;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
   }
 
-  .producto .descripcion{
-    margin-top:1mm;
-    font-size:7.5px;
-    font-weight:700;
-    color:#333;
+  .info{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    font-size:13px;
+    line-height:1.25;
+    font-weight:800;
+    min-width:0;
   }
 
-  .datos{
+  .info-linea{
+    margin-bottom:1.2mm;
+    overflow-wrap:anywhere;
+  }
+
+  .datos-precio{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:1.5mm 3mm;
-    align-content:center;
-    margin-top:1mm;
+    gap:2mm;
+    border-top:1px dashed #000;
+    border-bottom:1px dashed #000;
+    padding:2mm 0;
+    margin:1.5mm 0;
   }
 
-  .dato{
-    border-bottom:1px solid #777;
-    padding-bottom:.5mm;
+  .dato-precio{
+    min-width:0;
   }
 
-  .dato span{
+  .dato-precio span{
     display:block;
-    font-size:6.5px;
+    font-size:9px;
     font-weight:900;
     text-transform:uppercase;
   }
 
-  .dato strong{
+  .dato-precio strong{
     display:block;
-    margin-top:.3mm;
-    font-size:10px;
+    margin-top:.5mm;
+    font-size:16px;
     line-height:1;
+    font-weight:900;
   }
 
   .total-etiqueta{
     display:flex;
+    align-items:flex-end;
     justify-content:space-between;
-    align-items:end;
-    border-top:1.5px solid #000;
-    padding-top:1.5mm;
+    gap:2mm;
     margin-top:1mm;
   }
 
-  .fecha-lote{
-    font-size:6.5px;
-    font-weight:800;
-    line-height:1.35;
+  .conservacion{
+    max-width:26mm;
+    font-size:10px;
+    line-height:1.15;
+    font-weight:900;
+    text-transform:uppercase;
   }
 
-  .precio-total{
+  .total-caja{
     text-align:right;
+    white-space:nowrap;
   }
 
-  .precio-total span{
+  .total-caja span{
     display:block;
-    font-size:7px;
+    font-size:10px;
     font-weight:900;
   }
 
-  .precio-total strong{
+  .total-caja strong{
     display:block;
-    font-size:20px;
+    font-size:23px;
     line-height:.95;
     font-weight:900;
   }
 
-  @media(max-width:760px){
+  @media(max-width:850px){
     .formulario{
       grid-template-columns:1fr 1fr;
     }
@@ -269,7 +304,7 @@
     }
   }
 
-  @media(max-width:480px){
+  @media(max-width:520px){
     .formulario{
       grid-template-columns:1fr;
     }
@@ -286,21 +321,21 @@
   @media print{
     html,
     body{
-      width:80mm;
-      height:50mm;
+      width:200mm;
+      height:80mm;
       margin:0;
       padding:0;
-      background:#fff;
       overflow:hidden;
+      background:#fff;
     }
 
     .panel{
       display:none !important;
     }
 
-    .contenedor-previa{
-      width:80mm;
-      height:50mm;
+    .vista-previa{
+      width:200mm;
+      height:80mm;
       margin:0;
       padding:0;
       overflow:hidden;
@@ -318,8 +353,8 @@
 <body>
 
 <section class="panel">
-  <h1>Etiqueta para charolas</h1>
-  <p class="subtitulo">Captura el producto, peso y precio por kilo. El total se calcula automáticamente.</p>
+  <h1>Etiqueta para charolas de carne</h1>
+  <p>Conserva el diseño original CVC y calcula automáticamente kilos × precio por kilo.</p>
 
   <div class="formulario">
 
@@ -339,13 +374,13 @@
       </select>
     </div>
 
-    <div class="campo doble" id="campoLibre" style="display:none">
+    <div class="campo doble" id="campoProductoLibre" style="display:none;">
       <label for="productoLibre">Nombre del producto</label>
-      <input id="productoLibre" type="text" maxlength="36" placeholder="Ej. Aguayón de res">
+      <input id="productoLibre" type="text" maxlength="42" placeholder="Ej. Aguayón de res">
     </div>
 
     <div class="campo">
-      <label for="kilos">Peso en kilogramos</label>
+      <label for="kilos">Kilos</label>
       <input id="kilos" type="number" min="0" step="0.001" inputmode="decimal" placeholder="0.000">
     </div>
 
@@ -356,7 +391,7 @@
 
     <div class="campo">
       <label for="total">Total</label>
-      <input id="total" class="total-calculado" type="text" value="$0.00" readonly>
+      <input id="total" type="text" value="$0.00" readonly>
     </div>
 
     <div class="campo">
@@ -366,62 +401,80 @@
 
     <div class="campo">
       <label for="lote">Lote</label>
-      <input id="lote" type="text" maxlength="24" placeholder="Ej. CVC-270726">
+      <input id="lote" type="text" maxlength="25" placeholder="Ej. LOTE-01">
     </div>
 
     <div class="campo">
       <label for="codigo">Código</label>
-      <input id="codigo" type="text" maxlength="24" placeholder="Ej. CAR-001">
+      <input id="codigo" type="text" maxlength="25" placeholder="Ej. VDC-BIS-01">
     </div>
 
     <div class="campo doble">
-      <label for="descripcion">Descripción corta</label>
-      <input id="descripcion" type="text" maxlength="55" value="Producto fresco · Mantener refrigerado">
+      <label for="conservacion">Leyenda de conservación</label>
+      <select id="conservacion">
+        <option value="CONSERVAR REFRIGERADO">Conservar refrigerado</option>
+        <option value="CONSERVAR CONGELADO">Conservar congelado</option>
+      </select>
     </div>
 
   </div>
 
   <div class="acciones">
-    <button class="btn-imprimir" type="button" onclick="imprimirEtiqueta()">Imprimir etiqueta</button>
-    <button class="btn-limpiar" type="button" onclick="limpiarCampos()">Nueva etiqueta</button>
+    <button class="imprimir" type="button" onclick="imprimirEtiqueta()">Imprimir etiqueta</button>
+    <button class="limpiar" type="button" onclick="nuevaEtiqueta()">Nueva etiqueta</button>
   </div>
 </section>
 
-<div class="contenedor-previa">
+<div class="vista-previa">
   <div class="etiqueta">
 
-    <div class="logo-zona">
-      <img src="logo_recortado.png" class="logo" alt="Logo CVC">
-      <div class="marca">Carnes y Vísceras del Centro</div>
+    <div class="bloque-logo">
+      <img src="logo_recortado.png" class="logo" alt="Logo Carnes y Vísceras del Centro">
+      <div class="empresa">Carnes y Vísceras del Centro</div>
     </div>
 
     <div class="producto">
-      <h2 id="vistaProducto">BISTEC DE RES</h2>
-      <div class="descripcion" id="vistaDescripcion">Producto fresco · Mantener refrigerado</div>
+      <h1 id="vistaProducto">BISTEC DE RES</h1>
+      <h2>VÍSCERAS DEL CENTRO</h2>
     </div>
 
-    <div class="datos">
-      <div class="dato">
-        <span>Peso neto</span>
-        <strong id="vistaKilos">0.000 kg</strong>
+    <div class="info">
+      <div class="info-linea">
+        <strong>FECHA:</strong>
+        <span id="vistaFecha"></span>
       </div>
 
-      <div class="dato">
-        <span>Precio por kg</span>
-        <strong id="vistaPrecioKg">$0.00</strong>
-      </div>
-    </div>
-
-    <div class="total-etiqueta">
-      <div class="fecha-lote">
-        <div>FECHA: <span id="vistaFecha"></span></div>
-        <div>LOTE: <span id="vistaLote">—</span></div>
-        <div>COD: <span id="vistaCodigo">—</span></div>
+      <div class="info-linea">
+        <strong>LOTE:</strong>
+        <span id="vistaLote">—</span>
       </div>
 
-      <div class="precio-total">
-        <span>TOTAL</span>
-        <strong id="vistaTotal">$0.00</strong>
+      <div class="info-linea">
+        <strong>COD:</strong>
+        <span id="vistaCodigo">—</span>
+      </div>
+
+      <div class="datos-precio">
+        <div class="dato-precio">
+          <span>Peso neto</span>
+          <strong id="vistaKilos">0.000 kg</strong>
+        </div>
+
+        <div class="dato-precio">
+          <span>Precio / kg</span>
+          <strong id="vistaPrecioKg">$0.00</strong>
+        </div>
+      </div>
+
+      <div class="total-etiqueta">
+        <div class="conservacion" id="vistaConservacion">
+          CONSERVAR REFRIGERADO
+        </div>
+
+        <div class="total-caja">
+          <span>TOTAL</span>
+          <strong id="vistaTotal">$0.00</strong>
+        </div>
       </div>
     </div>
 
@@ -430,108 +483,119 @@
 
 <script>
   const precios = {
-    "Bistec de res": 250,
-    "Carne molida": 250,
-    "Costilla de res": 200,
-    "Chuleta": 250,
-    "Rib Eye": 410,
-    "Sirloin": 270,
-    "Pecho": 250,
-    "Carne para cocido": 250,
-    "Carne para deshebrar": 250
+    "Bistec de res":250,
+    "Carne molida":250,
+    "Costilla de res":200,
+    "Chuleta":250,
+    "Rib Eye":410,
+    "Sirloin":270,
+    "Pecho":250,
+    "Carne para cocido":250,
+    "Carne para deshebrar":250
   };
 
   const producto = document.getElementById("producto");
-  const campoLibre = document.getElementById("campoLibre");
   const productoLibre = document.getElementById("productoLibre");
+  const campoProductoLibre = document.getElementById("campoProductoLibre");
   const kilos = document.getElementById("kilos");
   const precioKg = document.getElementById("precioKg");
   const total = document.getElementById("total");
   const fecha = document.getElementById("fecha");
   const lote = document.getElementById("lote");
   const codigo = document.getElementById("codigo");
-  const descripcion = document.getElementById("descripcion");
+  const conservacion = document.getElementById("conservacion");
 
   function fechaLocalISO(){
     const ahora = new Date();
-    const ajuste = ahora.getTimezoneOffset() * 60000;
-    return new Date(ahora.getTime() - ajuste).toISOString().slice(0,10);
+    const diferencia = ahora.getTimezoneOffset() * 60000;
+    return new Date(ahora.getTime() - diferencia).toISOString().slice(0,10);
   }
 
-  function formatoDinero(numero){
-    return new Intl.NumberFormat("es-MX", {
-      style:"currency",
-      currency:"MXN",
-      minimumFractionDigits:2
-    }).format(numero || 0);
-  }
-
-  function formatoFecha(valor){
+  function formatearFecha(valor){
     if(!valor) return "";
-    const [anio, mes, dia] = valor.split("-");
-    return `${dia}/${mes}/${anio}`;
+    const partes = valor.split("-");
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
   }
 
-  function obtenerNombreProducto(){
+  function formatearDinero(numero){
+    return "$" + (Number(numero) || 0).toLocaleString("es-MX", {
+      minimumFractionDigits:2,
+      maximumFractionDigits:2
+    });
+  }
+
+  function nombreActual(){
     if(producto.value === "Producto libre"){
       return productoLibre.value.trim() || "PRODUCTO";
     }
     return producto.value;
   }
 
-  function recalcular(){
+  function ajustarNombre(){
+    const elemento = document.getElementById("vistaProducto");
+    const texto = elemento.textContent.trim();
+
+    elemento.classList.remove("corto", "largo", "muy-largo");
+
+    if(texto.length <= 12){
+      elemento.classList.add("corto");
+    }else if(texto.length >= 24 && texto.length <= 32){
+      elemento.classList.add("largo");
+    }else if(texto.length > 32){
+      elemento.classList.add("muy-largo");
+    }
+  }
+
+  function actualizar(){
     const kg = Number(kilos.value) || 0;
     const precio = Number(precioKg.value) || 0;
     const importe = kg * precio;
 
-    total.value = formatoDinero(importe);
+    total.value = formatearDinero(importe);
 
     document.getElementById("vistaProducto").textContent =
-      obtenerNombreProducto().toUpperCase();
-
-    document.getElementById("vistaDescripcion").textContent =
-      descripcion.value.trim() || "Producto fresco";
-
-    document.getElementById("vistaKilos").textContent =
-      `${kg.toFixed(3)} kg`;
-
-    document.getElementById("vistaPrecioKg").textContent =
-      formatoDinero(precio);
-
-    document.getElementById("vistaTotal").textContent =
-      formatoDinero(importe);
+      nombreActual().toUpperCase();
 
     document.getElementById("vistaFecha").textContent =
-      formatoFecha(fecha.value);
+      formatearFecha(fecha.value);
 
     document.getElementById("vistaLote").textContent =
       lote.value.trim() || "—";
 
     document.getElementById("vistaCodigo").textContent =
       codigo.value.trim() || "—";
+
+    document.getElementById("vistaKilos").textContent =
+      kg.toFixed(3) + " kg";
+
+    document.getElementById("vistaPrecioKg").textContent =
+      formatearDinero(precio);
+
+    document.getElementById("vistaTotal").textContent =
+      formatearDinero(importe);
+
+    document.getElementById("vistaConservacion").textContent =
+      conservacion.value;
+
+    ajustarNombre();
   }
 
   function cambiarProducto(){
-    const esLibre = producto.value === "Producto libre";
-    campoLibre.style.display = esLibre ? "flex" : "none";
+    const libre = producto.value === "Producto libre";
+    campoProductoLibre.style.display = libre ? "flex" : "none";
 
-    if(!esLibre && precios[producto.value] !== undefined){
+    if(!libre && precios[producto.value] !== undefined){
       precioKg.value = precios[producto.value].toFixed(2);
     }
 
-    recalcular();
+    actualizar();
   }
 
   function imprimirEtiqueta(){
-    recalcular();
-
-    if(!obtenerNombreProducto().trim()){
-      alert("Escribe el nombre del producto.");
-      return;
-    }
+    actualizar();
 
     if(!(Number(kilos.value) > 0)){
-      alert("Captura un peso mayor a cero.");
+      alert("Captura los kilos del producto.");
       kilos.focus();
       return;
     }
@@ -545,17 +609,19 @@
     window.print();
   }
 
-  function limpiarCampos(){
+  function nuevaEtiqueta(){
+    producto.value = "Bistec de res";
+    productoLibre.value = "";
     kilos.value = "";
     lote.value = "";
     codigo.value = "";
-    productoLibre.value = "";
+    conservacion.value = "CONSERVAR REFRIGERADO";
     fecha.value = fechaLocalISO();
-    producto.value = "Bistec de res";
-    descripcion.value = "Producto fresco · Mantener refrigerado";
     cambiarProducto();
     kilos.focus();
   }
+
+  producto.addEventListener("change", cambiarProducto);
 
   [
     productoLibre,
@@ -564,13 +630,11 @@
     fecha,
     lote,
     codigo,
-    descripcion
-  ].forEach(elemento => {
-    elemento.addEventListener("input", recalcular);
-    elemento.addEventListener("change", recalcular);
+    conservacion
+  ].forEach(campo => {
+    campo.addEventListener("input", actualizar);
+    campo.addEventListener("change", actualizar);
   });
-
-  producto.addEventListener("change", cambiarProducto);
 
   fecha.value = fechaLocalISO();
   cambiarProducto();
