@@ -100,7 +100,7 @@
     padding: 6mm 8mm;
     border: 2px solid #000;
     display: grid;
-    grid-template-columns: 68mm 1fr 49mm;
+    grid-template-columns: 64mm 82mm 44mm;
     gap: 5mm;
     overflow: hidden;
     position: relative;
@@ -145,26 +145,17 @@
 
   .producto h1{
     margin: 0;
-    font-size: 31px;
-    line-height: 1;
-    font-weight: 900;
-    letter-spacing: .5px;
-    overflow-wrap: anywhere;
-  }
-
-  .producto h1.nombre-corto{
+    width: 100%;
+    max-width: 100%;
     font-size: 42px;
-    line-height: 1.05;
-  }
-
-  .producto h1.nombre-largo{
-    font-size: 25px;
-    line-height: 1.05;
-  }
-
-  .producto h1.nombre-muy-largo{
-    font-size: 21px;
-    line-height: 1.05;
+    line-height: 1.03;
+    font-weight: 900;
+    letter-spacing: .3px;
+    text-align: center;
+    white-space: normal;
+    word-break: keep-all;
+    overflow-wrap: normal;
+    hyphens: none;
   }
 
   .producto h2{
@@ -483,20 +474,22 @@
   }
 
   function ajustarTamanoNombre(){
-    const texto = nombreProducto.textContent.trim();
+    const tamanoMaximo = 42;
+    const tamanoMinimo = 16;
 
-    nombreProducto.classList.remove(
-      "nombre-corto",
-      "nombre-largo",
-      "nombre-muy-largo"
-    );
+    nombreProducto.style.fontSize = tamanoMaximo + "px";
 
-    if(texto.length <= 12){
-      nombreProducto.classList.add("nombre-corto");
-    }else if(texto.length >= 25 && texto.length <= 32){
-      nombreProducto.classList.add("nombre-largo");
-    }else if(texto.length > 32){
-      nombreProducto.classList.add("nombre-muy-largo");
+    let tamano = tamanoMaximo;
+
+    while(
+      tamano > tamanoMinimo &&
+      (
+        nombreProducto.scrollWidth > nombreProducto.clientWidth ||
+        nombreProducto.scrollHeight > nombreProducto.clientHeight
+      )
+    ){
+      tamano--;
+      nombreProducto.style.fontSize = tamano + "px";
     }
   }
 
