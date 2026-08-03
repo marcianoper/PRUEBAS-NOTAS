@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VDC360 · Diseñador de etiqueta 62 mm</title>
+
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+
+<style>
+  :root{
+    --bg:#eef1f4;
+    --panel:#ffffff;
+    --line:#cfd5dc;
+    --ink:#111;
+    --muted:#667085;
+    --brand:#7b1f2a;
+    --label-w:62mm;
+    --label-h:100mm;
+  }
+
+  *{box-sizing:border-box}
+
+  html,body{
+    margin:0;
+    min-height:100%;
+    font-family:Arial, Helvetica, sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+  }
+
+  body{
+    padding:18px;
+  }
+
+  .app{
+    max-width:1400px;
+    margin:auto;
+  }
+
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:16px;
+  }
+
+  .topbar h1{
+    margin:0;
+    font-size:clamp(22px,3vw,34px);
+    line-height:1.1;
+  }
+
+  .topbar p{
+    margin:6px 0 0;
+    color:var(--muted);
+    font-size:14px;
+  }
+
+  .actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+
+  button{
+    appearance:none;
+    border:0;
+    border-radius:12px;
+    padding:11px 15px;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    background:#e4e7ec;
+    color:#111;
+  }
+
+  button.primary{
+    background:var(--brand);
+    color:#fff;
+  }
+
+  button.dark{
+    background:#111;
+    color:#fff;
+  }
+
+  .layout{
+    display:grid;
+    grid-template-columns:minmax(320px, 520px) minmax(320px,1fr);
+    gap:18px;
+    align-items:start;
+  }
+
+  .panel{
+    background:var(--panel);
+    border:1px solid #e3e7eb;
+    border-radius:18px;
+    box-shadow:0 12px 35px rgba(16,24,40,.08);
+    overflow:hidden;
+  }
+
+  .panel-head{
+    padding:16px 18px;
+    border-bottom:1px solid #eaecf0;
+  }
+
+  .panel-head h2{
+    margin:0;
+    font-size:19px;
+  }
+
+  .panel-body{
+    padding:18px;
+  }
+
+  .form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+
+  .field.full{
+    grid-column:1 / -1;
+  }
+
+  label{
+    font-size:13px;
+    font-weight:800;
+    color:#344054;
+  }
+
+  input, select, textarea{
+    width:100%;
+    border:1px solid #d0d5dd;
+    border-radius:10px;
+    padding:11px 12px;
+    font:inherit;
+    background:#fff;
+    outline:none;
+  }
+
+  input:focus, select:focus, textarea:focus{
+    border-color:#7b1f2a;
+    box-shadow:0 0 0 3px rgba(123,31,42,.12);
+  }
+
+  .hint{
+    margin-top:14px;
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.45;
+  }
+
+  .preview-wrap{
+    display:flex;
+    justify-content:center;
+    padding:28px;
+    overflow:auto;
+    background:
+      linear-gradient(45deg,#eceff2 25%,transparent 25%),
+      linear-gradient(-45deg,#eceff2 25%,transparent 25%),
+      linear-gradient(45deg,transparent 75%,#eceff2 75%),
+      linear-gradient(-45deg,transparent 75%,#eceff2 75%);
+    background-size:20px 20px;
+    background-position:0 0,0 10px,10px -10px,-10px 0;
+  }
+
+  /* ETIQUETA REAL: medidas físicas exactas */
+  .label{
+    position:relative;
+    width:62mm;
+    height:100mm;
+    flex:0 0 auto;
+    background:#f7f5ef;
+    border-radius:4mm;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+    color:#111;
+    font-family:"Arial Narrow", Arial, Helvetica, sans-serif;
+  }
+
+  .label-inner{
+    position:absolute;
+    inset:0;
+    display:grid;
+    grid-template-columns:14mm 48mm;
+    width:62mm;
+    height:100mm;
+  }
+
+  .brand-strip{
+    width:14mm;
+    height:100mm;
+    background:#d5d0c8;
+    border-right:.3mm solid #bdb7ae;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:space-between;
+    padding:3mm 1.2mm 4mm;
+    overflow:hidden;
+  }
+
+  .logo{
+    width:10.2mm;
+    height:7.2mm;
+    flex:0 0 7.2mm;
+    background:#a81422;
+    color:#fff;
+    border-radius:3.6mm;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:Arial, Helvetica, sans-serif;
+    font-weight:900;
+    font-size:3.2mm;
+    border:.45mm solid #fff;
+    box-shadow:0 0 0 .25mm #a81422;
+    overflow:hidden;
+  }
+
+  .vertical-brand{
+    writing-mode:vertical-rl;
+    transform:rotate(180deg);
+    color:#fff;
+    font-size:4mm;
+    line-height:1;
+    font-weight:700;
+    letter-spacing:.08mm;
+    white-space:nowrap;
+    max-height:82mm;
+    overflow:hidden;
+  }
+
+  .main{
+    width:48mm;
+    height:100mm;
+    display:grid;
+    grid-template-rows:14mm 21mm 23mm 42mm;
+    overflow:hidden;
+  }
+
+  .top-section{
+    width:48mm;
+    height:14mm;
+    display:grid;
+    grid-template-columns:31mm 17mm;
+    border-bottom:.3mm solid #c7c1b7;
+    overflow:hidden;
+  }
+
+  .category{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0 1mm;
+    font-size:3.1mm;
+    line-height:1;
+    font-weight:700;
+    letter-spacing:.25mm;
+    white-space:nowrap;
+    overflow:hidden;
+  }
+
+  .plu{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-left:.3mm solid #c7c1b7;
+    font-weight:900;
+    font-size:5.2mm;
+    line-height:1;
+    overflow:hidden;
+  }
+
+  .product-section{
+    width:48mm;
+    height:21mm;
+    display:grid;
+    grid-template-columns:16mm 32mm;
+    border-bottom:.3mm solid #c7c1b7;
+    overflow:hidden;
+  }
+
+  .product-icon{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:9mm;
+    line-height:1;
+    overflow:hidden;
+  }
+
+  .product-name{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:1mm;
+    font-weight:900;
+    font-size:5.1mm;
+    line-height:1.02;
+    text-transform:uppercase;
+    overflow:hidden;
+    word-break:break-word;
+  }
+
+  .barcode-section{
+    width:48mm;
+    height:23mm;
+    display:grid;
+    grid-template-rows:17mm 4mm;
+    align-content:center;
+    border-bottom:.3mm solid #c7c1b7;
+    padding:1mm 1.5mm .6mm;
+    overflow:hidden;
+  }
+
+  #barcode{
+    width:45mm;
+    height:17mm;
+    display:block;
+    overflow:visible;
+  }
+
+  .barcode-human{
+    width:45mm;
+    height:4mm;
+    line-height:4mm;
+    text-align:center;
+    font-size:2.45mm;
+    letter-spacing:.08mm;
+    white-space:nowrap;
+    overflow:hidden;
+  }
+
+  .bottom{
+    width:48mm;
+    height:42mm;
+    display:grid;
+    grid-template-columns:35mm 13mm;
+    overflow:hidden;
+  }
+
+  .details{
+    width:35mm;
+    height:42mm;
+    display:grid;
+    grid-template-columns:17.5mm 17.5mm;
+    grid-template-rows:14mm 14mm 14mm;
+    overflow:hidden;
+  }
+
+  .cell{
+    min-width:0;
+    min-height:0;
+    padding:1.2mm 1mm;
+    border-right:.3mm solid #c7c1b7;
+    border-bottom:.3mm solid #c7c1b7;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:.55mm;
+    overflow:hidden;
+  }
+
+  .cell:nth-child(2n){border-right:0}
+  .cell:nth-child(5), .cell:nth-child(6){border-bottom:0}
+
+  .cell .k{
+    font-size:2.35mm;
+    line-height:1.05;
+    font-weight:700;
+    overflow:hidden;
+  }
+
+  .cell .v{
+    font-size:3.05mm;
+    line-height:1.05;
+    font-weight:900;
+    white-space:normal;
+    overflow:hidden;
+  }
+
+  .total{
+    width:13mm;
+    height:42mm;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    border-left:.3mm solid #c7c1b7;
+    padding:.8mm;
+    overflow:hidden;
+  }
+
+  .total-label{
+    font-size:2.9mm;
+    line-height:1;
+    font-weight:700;
+    margin-bottom:1.2mm;
+    flex:0 0 auto;
+  }
+
+  .total-value{
+    writing-mode:vertical-rl;
+    transform:rotate(180deg);
+    font-size:5.6mm;
+    line-height:1;
+    font-weight:900;
+    letter-spacing:0;
+    white-space:nowrap;
+    max-height:35mm;
+    overflow:hidden;
+  }
+
+  .actual-size{
+    text-align:center;
+    color:#475467;
+    font-size:12px;
+    padding:10px 14px 16px;
+  }
+
+  @media (max-width:900px){
+    body{padding:10px}
+    .layout{grid-template-columns:1fr}
+    .preview-wrap{padding:18px 8px}
+    .topbar{align-items:flex-start;flex-direction:column}
+  }
+
+  @media (max-width:520px){
+    .form-grid{grid-template-columns:1fr}
+    .field.full{grid-column:auto}
+    .preview-wrap{min-width:290px}
+  }
+
+  @page{
+    size:62mm 100mm;
+    margin:0;
+  }
+
+  @media print{
+    html,body{
+      width:62mm!important;
+      height:100mm!important;
+      min-width:62mm!important;
+      min-height:100mm!important;
+      margin:0!important;
+      padding:0!important;
+      overflow:hidden!important;
+      background:#fff!important;
+    }
+
+    body > *{display:none!important}
+
+    .app{
+      display:block!important;
+      width:62mm!important;
+      height:100mm!important;
+      margin:0!important;
+      padding:0!important;
+    }
+
+    .app > *{display:none!important}
+
+    .layout{
+      display:block!important;
+      width:62mm!important;
+      height:100mm!important;
+      margin:0!important;
+      padding:0!important;
+    }
+
+    .layout > *{display:none!important}
+
+    .layout .panel:last-child{
+      display:block!important;
+      width:62mm!important;
+      height:100mm!important;
+      margin:0!important;
+      padding:0!important;
+      border:0!important;
+      box-shadow:none!important;
+      overflow:visible!important;
+    }
+
+    .layout .panel:last-child > *{display:none!important}
+
+    .preview-wrap{
+      display:block!important;
+      width:62mm!important;
+      height:100mm!important;
+      min-width:62mm!important;
+      min-height:100mm!important;
+      margin:0!important;
+      padding:0!important;
+      background:none!important;
+      overflow:hidden!important;
+    }
+
+    .label{
+      display:block!important;
+      position:absolute!important;
+      left:0!important;
+      top:0!important;
+      width:62mm!important;
+      height:100mm!important;
+      margin:0!important;
+      padding:0!important;
+      border-radius:0!important;
+      box-shadow:none!important;
+      overflow:hidden!important;
+      transform:none!important;
+      print-color-adjust:exact!important;
+      -webkit-print-color-adjust:exact!important;
+    }
+
+    .label, .label *{
+      visibility:visible!important;
+    }
+  }
+</style>
+</head>
+
+<body>
+<div class="app">
+  <div class="topbar">
+    <div>
+      <h1>Diseñador de etiqueta adhesiva 62 mm</h1>
+      <p>Plantilla vertical de 62 × 100 mm, preparada para impresión térmica.</p>
+    </div>
+
+    <div class="actions">
+      <button type="button" onclick="guardarPlantilla()">Guardar datos</button>
+      <button type="button" onclick="restablecer()">Restablecer</button>
+      <button type="button" class="dark" onclick="window.print()">Imprimir etiqueta</button>
+    </div>
+  </div>
+
+  <div class="layout">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Información de la etiqueta</h2>
+      </div>
+
+      <div class="panel-body">
+        <div class="form-grid">
+          <div class="field full">
+            <label for="brand">Leyenda lateral</label>
+            <input id="brand" value="EXPERTOS EN FRESCURA">
+          </div>
+
+          <div class="field">
+            <label for="logoText">Texto del logotipo</label>
+            <input id="logoText" value="CVC">
+          </div>
+
+          <div class="field">
+            <label for="category">Categoría</label>
+            <input id="category" value="CARNES">
+          </div>
+
+          <div class="field full">
+            <label for="product">Producto</label>
+            <input id="product" value="RIBEYE ANGUS">
+          </div>
+
+          <div class="field">
+            <label for="icon">Símbolo</label>
+            <select id="icon">
+              <option value="🥩">🥩 Carne</option>
+              <option value="🍖">🍖 Corte</option>
+              <option value="🐄">🐄 Res</option>
+              <option value="📦">📦 Caja</option>
+              <option value="●">● Genérico</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="plu">PLU</label>
+            <input id="plu" inputmode="numeric" value="4395">
+          </div>
+
+          <div class="field">
+            <label for="price">Precio por kg</label>
+            <input id="price" type="number" min="0" step="0.01" value="410.00">
+          </div>
+
+          <div class="field">
+            <label for="weight">Peso / cantidad kg</label>
+            <input id="weight" type="number" min="0" step="0.001" value="0.508">
+          </div>
+
+          <div class="field">
+            <label for="packedDate">Fecha de empacado</label>
+            <input id="packedDate" type="date">
+          </div>
+
+          <div class="field">
+            <label for="packedTime">Hora</label>
+            <input id="packedTime" type="time">
+          </div>
+
+          <div class="field">
+            <label for="bestBefore">Consumo preferente</label>
+            <input id="bestBefore" type="date">
+          </div>
+
+          <div class="field">
+            <label for="barcodeValue">Código de barras</label>
+            <input id="barcodeValue" inputmode="numeric" value="29043950000508">
+          </div>
+
+          <div class="field full">
+            <label for="totalManual">Total manual (opcional)</label>
+            <input id="totalManual" type="number" min="0" step="0.01" placeholder="Vacío = peso × precio">
+          </div>
+        </div>
+
+        <p class="hint">
+          Para etiquetas refrigeradas o congeladas utiliza rollo térmico directo autoadherible
+          con adhesivo permanente para baja temperatura. La impresora debe aceptar etiquetas
+          troqueladas de 62 mm de ancho.
+        </p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Vista previa</h2>
+      </div>
+
+      <div class="preview-wrap">
+        <article class="label" id="label">
+          <div class="label-inner">
+            <aside class="brand-strip">
+              <div class="logo" id="vLogo">CVC</div>
+              <div class="vertical-brand" id="vBrand">EXPERTOS EN FRESCURA</div>
+            </aside>
+
+            <main class="main">
+              <section class="top-section">
+                <div class="category" id="vCategory">CARNES</div>
+                <div class="plu" id="vPlu">4395</div>
+              </section>
+
+              <section class="product-section">
+                <div class="product-icon" id="vIcon">🥩</div>
+                <div class="product-name" id="vProduct">RIBEYE ANGUS</div>
+              </section>
+
+              <section class="barcode-section">
+                <svg id="barcode"></svg>
+                <div class="barcode-human" id="vBarcodeText">29043950000508</div>
+              </section>
+
+              <section class="bottom">
+                <div class="details">
+                  <div class="cell">
+                    <div class="k">Precio / kg</div>
+                    <div class="v" id="vPrice">$ 410.00</div>
+                  </div>
+
+                  <div class="cell">
+                    <div class="k">Hora</div>
+                    <div class="v" id="vTime">14:23</div>
+                  </div>
+
+                  <div class="cell">
+                    <div class="k">Fecha de empacado</div>
+                    <div class="v" id="vPacked">03.08.2026</div>
+                  </div>
+
+                  <div class="cell">
+                    <div class="k">Cantidad</div>
+                    <div class="v" id="vWeight">0.508 kg</div>
+                  </div>
+
+                  <div class="cell">
+                    <div class="k">Consumo preferente</div>
+                    <div class="v" id="vBestBefore">08.08.2026</div>
+                  </div>
+
+                  <div class="cell">
+                    <div class="k">Código</div>
+                    <div class="v" id="vShortCode">000508</div>
+                  </div>
+                </div>
+
+                <div class="total">
+                  <div class="total-label">Total</div>
+                  <div class="total-value" id="vTotal">$ 208.28</div>
+                </div>
+              </section>
+            </main>
+          </div>
+        </article>
+      </div>
+
+      <div class="actual-size">
+        Tamaño de impresión configurado: <strong>62 × 100 mm</strong>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  const ids = [
+    "brand","logoText","category","product","icon","plu","price","weight",
+    "packedDate","packedTime","bestBefore","barcodeValue","totalManual"
+  ];
+
+  const $ = id => document.getElementById(id);
+
+  function fechaISO(date){
+    const y = date.getFullYear();
+    const m = String(date.getMonth()+1).padStart(2,"0");
+    const d = String(date.getDate()).padStart(2,"0");
+    return `${y}-${m}-${d}`;
+  }
+
+  function fechaVisible(value){
+    if(!value) return "";
+    const [y,m,d] = value.split("-");
+    return `${d}.${m}.${y}`;
+  }
+
+  function dinero(n){
+    return new Intl.NumberFormat("es-MX",{
+      minimumFractionDigits:2,
+      maximumFractionDigits:2
+    }).format(Number(n) || 0);
+  }
+
+  function soloDigitos(texto){
+    return String(texto || "").replace(/\D/g,"");
+  }
+
+  function inicializarFechas(){
+    const ahora = new Date();
+    const consumo = new Date(ahora);
+    consumo.setDate(consumo.getDate()+5);
+
+    $("packedDate").value = fechaISO(ahora);
+    $("bestBefore").value = fechaISO(consumo);
+    $("packedTime").value = `${String(ahora.getHours()).padStart(2,"0")}:${String(ahora.getMinutes()).padStart(2,"0")}`;
+  }
+
+  function actualizar(){
+    const precio = parseFloat($("price").value) || 0;
+    const peso = parseFloat($("weight").value) || 0;
+    const manual = parseFloat($("totalManual").value);
+    const total = Number.isFinite(manual) ? manual : precio * peso;
+
+    $("vBrand").textContent = $("brand").value || " ";
+    $("vLogo").textContent = $("logoText").value || " ";
+    $("vCategory").textContent = $("category").value || " ";
+    $("vProduct").textContent = $("product").value || " ";
+    $("vIcon").textContent = $("icon").value;
+    $("vPlu").textContent = $("plu").value || " ";
+    $("vPrice").textContent = `$ ${dinero(precio)}`;
+    $("vWeight").textContent = `${peso.toFixed(3)} kg`;
+    $("vPacked").textContent = fechaVisible($("packedDate").value);
+    $("vTime").textContent = $("packedTime").value || "";
+    $("vBestBefore").textContent = fechaVisible($("bestBefore").value);
+    $("vTotal").textContent = `$ ${dinero(total)}`;
+
+    let code = soloDigitos($("barcodeValue").value);
+    if(code.length < 6) code = code.padStart(6,"0");
+    $("vBarcodeText").textContent = code;
+    $("vShortCode").textContent = code.slice(-6);
+
+    try{
+      JsBarcode("#barcode", code, {
+        format:"CODE128",
+        displayValue:false,
+        margin:0,
+        height:52,
+        width:1.15,
+        background:"transparent",
+        lineColor:"#111"
+      });
+    }catch(error){
+      console.warn("No se pudo generar el código de barras", error);
+    }
+  }
+
+  function guardarPlantilla(){
+    const data = {};
+    ids.forEach(id => data[id] = $(id).value);
+    localStorage.setItem("vdc360_etiqueta_62mm", JSON.stringify(data));
+    alert("Datos guardados en este dispositivo.");
+  }
+
+  function cargarPlantilla(){
+    const raw = localStorage.getItem("vdc360_etiqueta_62mm");
+    if(!raw) return;
+    try{
+      const data = JSON.parse(raw);
+      ids.forEach(id => {
+        if(data[id] !== undefined) $(id).value = data[id];
+      });
+    }catch(e){}
+  }
+
+  function restablecer(){
+    localStorage.removeItem("vdc360_etiqueta_62mm");
+    location.reload();
+  }
+
+  ids.forEach(id => {
+    $(id).addEventListener("input", actualizar);
+    $(id).addEventListener("change", actualizar);
+  });
+
+  inicializarFechas();
+  cargarPlantilla();
+  actualizar();
+</script>
+</body>
+</html>
