@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VDC360 · Etiqueta 62 × 100 mm</title>
+<title>VDC360 · Etiqueta 62 mm en impresora POS-80</title>
 
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
@@ -459,13 +459,13 @@
   }
 
   @page{
-    size:62mm 100mm;
+    size:80mm 100mm;
     margin:0;
   }
 
   @media print{
     html,body{
-      width:62mm!important;
+      width:80mm!important;
       height:100mm!important;
       margin:0!important;
       padding:0!important;
@@ -482,17 +482,18 @@
       position:fixed!important;
       left:0!important;
       top:0!important;
-      width:62mm!important;
+      width:80mm!important;
       height:100mm!important;
       margin:0!important;
       padding:0!important;
       overflow:hidden!important;
+      background:#fff!important;
     }
 
     #printRoot .label{
       display:block!important;
-      position:relative!important;
-      left:0!important;
+      position:absolute!important;
+      left:9mm!important;
       top:0!important;
       width:62mm!important;
       height:100mm!important;
@@ -516,7 +517,7 @@
   <div class="topbar">
     <div>
       <h1>Diseñador de etiqueta adhesiva 62 mm</h1>
-      <p class="subtitle">Motor de impresión con posiciones absolutas en milímetros.</p>
+      <p class="subtitle">Perfil para impresora térmica POS de 80 mm; diseño de 62 mm centrado.</p>
     </div>
 
     <div class="actions">
@@ -611,7 +612,7 @@
         <div id="screenLabel"></div>
       </div>
       <div class="preview-note">
-        Tamaño real configurado: <strong>62 × 100 mm</strong>
+        Impresión: papel de <strong>80 mm</strong>, con etiqueta de <strong>62 mm centrada</strong>
       </div>
     </section>
   </div>
