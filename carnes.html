@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VDC360 · Diseñador de etiqueta 62 mm</title>
+<title>VDC360 · Etiqueta 62 × 100 mm</title>
 
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
@@ -11,12 +11,10 @@
   :root{
     --bg:#eef1f4;
     --panel:#ffffff;
-    --line:#cfd5dc;
+    --line:#d0d5dd;
     --ink:#111;
     --muted:#667085;
     --brand:#7b1f2a;
-    --label-w:62mm;
-    --label-h:100mm;
   }
 
   *{box-sizing:border-box}
@@ -24,71 +22,61 @@
   html,body{
     margin:0;
     min-height:100%;
-    font-family:Arial, Helvetica, sans-serif;
+    font-family:Arial,Helvetica,sans-serif;
     background:var(--bg);
     color:var(--ink);
   }
 
-  body{
-    padding:18px;
-  }
+  body{padding:18px}
 
   .app{
-    max-width:1400px;
+    max-width:1420px;
     margin:auto;
   }
 
   .topbar{
     display:flex;
-    align-items:center;
     justify-content:space-between;
-    gap:12px;
+    align-items:flex-start;
+    gap:16px;
     margin-bottom:16px;
   }
 
-  .topbar h1{
+  h1{
     margin:0;
-    font-size:clamp(22px,3vw,34px);
-    line-height:1.1;
+    font-size:clamp(24px,3vw,38px);
+    line-height:1.05;
   }
 
-  .topbar p{
-    margin:6px 0 0;
+  .subtitle{
+    margin:7px 0 0;
     color:var(--muted);
-    font-size:14px;
   }
 
   .actions{
     display:flex;
-    flex-wrap:wrap;
     gap:8px;
+    flex-wrap:wrap;
   }
 
   button{
-    appearance:none;
     border:0;
     border-radius:12px;
-    padding:11px 15px;
-    font-size:15px;
-    font-weight:700;
+    padding:12px 16px;
+    font:inherit;
+    font-weight:800;
     cursor:pointer;
     background:#e4e7ec;
-    color:#111;
   }
 
   button.primary{
-    background:var(--brand);
     color:#fff;
-  }
-
-  button.dark{
     background:#111;
-    color:#fff;
   }
 
   .layout{
     display:grid;
-    grid-template-columns:minmax(320px, 520px) minmax(320px,1fr);
+    grid-template-columns:minmax(330px,560px) minmax(360px,1fr);
     gap:18px;
     align-items:start;
   }
@@ -97,39 +85,35 @@
     background:var(--panel);
     border:1px solid #e3e7eb;
     border-radius:18px;
-    box-shadow:0 12px 35px rgba(16,24,40,.08);
     overflow:hidden;
+    box-shadow:0 14px 40px rgba(16,24,40,.08);
   }
 
   .panel-head{
-    padding:16px 18px;
+    padding:18px 20px;
     border-bottom:1px solid #eaecf0;
   }
 
   .panel-head h2{
     margin:0;
-    font-size:19px;
+    font-size:20px;
   }
 
-  .panel-body{
-    padding:18px;
-  }
+  .panel-body{padding:20px}
 
   .form-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:12px;
+    gap:14px;
   }
 
   .field{
     display:flex;
     flex-direction:column;
-    gap:6px;
+    gap:7px;
   }
 
-  .field.full{
-    grid-column:1 / -1;
-  }
+  .field.full{grid-column:1/-1}
 
   label{
     font-size:13px;
@@ -137,309 +121,341 @@
     color:#344054;
   }
 
-  input, select, textarea{
+  input,select{
     width:100%;
-    border:1px solid #d0d5dd;
+    border:1px solid var(--line);
     border-radius:10px;
     padding:11px 12px;
     font:inherit;
-    background:#fff;
     outline:none;
+    background:#fff;
   }
 
-  input:focus, select:focus, textarea:focus{
-    border-color:#7b1f2a;
+  input:focus,select:focus{
+    border-color:var(--brand);
     box-shadow:0 0 0 3px rgba(123,31,42,.12);
   }
 
-  .hint{
-    margin-top:14px;
-    color:var(--muted);
-    font-size:12px;
-    line-height:1.45;
-  }
-
-  .preview-wrap{
+  .preview-zone{
+    min-height:680px;
     display:flex;
+    align-items:flex-start;
     justify-content:center;
-    padding:28px;
+    padding:34px;
     overflow:auto;
     background:
-      linear-gradient(45deg,#eceff2 25%,transparent 25%),
-      linear-gradient(-45deg,#eceff2 25%,transparent 25%),
-      linear-gradient(45deg,transparent 75%,#eceff2 75%),
-      linear-gradient(-45deg,transparent 75%,#eceff2 75%);
+      linear-gradient(45deg,#edf0f3 25%,transparent 25%),
+      linear-gradient(-45deg,#edf0f3 25%,transparent 25%),
+      linear-gradient(45deg,transparent 75%,#edf0f3 75%),
+      linear-gradient(-45deg,transparent 75%,#edf0f3 75%);
     background-size:20px 20px;
     background-position:0 0,0 10px,10px -10px,-10px 0;
   }
 
-  /* ETIQUETA REAL: medidas físicas exactas */
+  .preview-note{
+    text-align:center;
+    color:#475467;
+    font-size:12px;
+    padding:12px 14px 16px;
+  }
+
+  /* =========================================================
+     MOTOR DE ETIQUETA: TODO EN COORDENADAS ABSOLUTAS Y MILÍMETROS
+     ========================================================= */
+
   .label{
     position:relative;
     width:62mm;
     height:100mm;
-    flex:0 0 auto;
+    flex:0 0 62mm;
     background:#f7f5ef;
-    border-radius:4mm;
-    overflow:hidden;
-    box-shadow:0 10px 30px rgba(0,0,0,.25);
     color:#111;
-    font-family:"Arial Narrow", Arial, Helvetica, sans-serif;
+    overflow:hidden;
+    border-radius:4mm;
+    box-shadow:0 16px 42px rgba(0,0,0,.28);
+    font-family:"Arial Narrow",Arial,Helvetica,sans-serif;
   }
 
-  .label-inner{
+  .item{
     position:absolute;
-    inset:0;
-    display:grid;
-    grid-template-columns:14mm 48mm;
-    width:62mm;
-    height:100mm;
+    margin:0;
+    padding:0;
+    overflow:hidden;
   }
 
-  .brand-strip{
+  .strip{
+    left:0;
+    top:0;
     width:14mm;
     height:100mm;
-    background:#d5d0c8;
-    border-right:.3mm solid #bdb7ae;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:space-between;
-    padding:3mm 1.2mm 4mm;
-    overflow:hidden;
+    background:#d3cec5;
+    border-right:.3mm solid #b7b0a6;
   }
 
-  .logo{
-    width:10.2mm;
-    height:7.2mm;
-    flex:0 0 7.2mm;
-    background:#a81422;
-    color:#fff;
-    border-radius:3.6mm;
+  .logo-box{
+    left:1.8mm;
+    top:3mm;
+    width:10.4mm;
+    height:8mm;
     display:flex;
-    align-items:center;
     justify-content:center;
-    font-family:Arial, Helvetica, sans-serif;
-    font-weight:900;
-    font-size:3.2mm;
+    align-items:center;
+    color:#fff;
+    background:#9f2635;
     border:.45mm solid #fff;
-    box-shadow:0 0 0 .25mm #a81422;
-    overflow:hidden;
+    box-shadow:0 0 0 .25mm #9f2635;
+    border-radius:3.5mm;
+    font-family:Arial,Helvetica,sans-serif;
+    font-size:3.4mm;
+    line-height:1;
+    font-weight:900;
+    z-index:3;
   }
 
-  .vertical-brand{
+  .side-text{
+    left:4.4mm;
+    top:23mm;
+    width:5.5mm;
+    height:71mm;
+    color:#fff;
     writing-mode:vertical-rl;
     transform:rotate(180deg);
-    color:#fff;
     font-size:4mm;
-    line-height:1;
+    line-height:5.5mm;
     font-weight:700;
-    letter-spacing:.08mm;
+    letter-spacing:.04mm;
+    text-align:center;
     white-space:nowrap;
-    max-height:82mm;
-    overflow:hidden;
-  }
-
-  .main{
-    width:48mm;
-    height:100mm;
-    display:grid;
-    grid-template-rows:14mm 21mm 23mm 42mm;
-    overflow:hidden;
-  }
-
-  .top-section{
-    width:48mm;
-    height:14mm;
-    display:grid;
-    grid-template-columns:31mm 17mm;
-    border-bottom:.3mm solid #c7c1b7;
-    overflow:hidden;
+    z-index:3;
   }
 
   .category{
+    left:14mm;
+    top:0;
+    width:31mm;
+    height:14mm;
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:0 1mm;
-    font-size:3.1mm;
-    line-height:1;
+    font-size:3.2mm;
     font-weight:700;
     letter-spacing:.25mm;
-    white-space:nowrap;
-    overflow:hidden;
   }
 
   .plu{
+    left:45mm;
+    top:0;
+    width:17mm;
+    height:14mm;
     display:flex;
     align-items:center;
     justify-content:center;
-    border-left:.3mm solid #c7c1b7;
+    font-size:5.5mm;
     font-weight:900;
-    font-size:5.2mm;
-    line-height:1;
-    overflow:hidden;
+    border-left:.3mm solid #c7c1b7;
   }
 
-  .product-section{
+  .line{
+    left:14mm;
     width:48mm;
-    height:21mm;
-    display:grid;
-    grid-template-columns:16mm 32mm;
-    border-bottom:.3mm solid #c7c1b7;
-    overflow:hidden;
+    height:.3mm;
+    background:#c7c1b7;
   }
 
-  .product-icon{
+  .line.l1{top:14mm}
+  .line.l2{top:35mm}
+  .line.l3{top:58mm}
+  .line.l4{top:76mm}
+
+  .icon{
+    left:15mm;
+    top:16mm;
+    width:16mm;
+    height:18mm;
     display:flex;
     align-items:center;
     justify-content:center;
     font-size:9mm;
     line-height:1;
-    overflow:hidden;
   }
 
-  .product-name{
+  .product{
+    left:31mm;
+    top:16mm;
+    width:29mm;
+    height:18mm;
     display:flex;
     align-items:center;
     justify-content:center;
     text-align:center;
-    padding:1mm;
-    font-weight:900;
-    font-size:5.1mm;
+    font-size:5.2mm;
     line-height:1.02;
+    font-weight:900;
     text-transform:uppercase;
-    overflow:hidden;
     word-break:break-word;
   }
 
-  .barcode-section{
-    width:48mm;
-    height:23mm;
-    display:grid;
-    grid-template-rows:17mm 4mm;
-    align-content:center;
-    border-bottom:.3mm solid #c7c1b7;
-    padding:1mm 1.5mm .6mm;
+  .barcode-wrap{
+    left:16mm;
+    top:37mm;
+    width:44mm;
+    height:19mm;
     overflow:hidden;
   }
 
-  #barcode{
-    width:45mm;
-    height:17mm;
+  .barcode-wrap svg{
+    width:44mm;
+    height:15mm;
     display:block;
-    overflow:visible;
   }
 
-  .barcode-human{
-    width:45mm;
+  .barcode-text{
+    position:absolute;
+    left:0;
+    top:15mm;
+    width:44mm;
     height:4mm;
-    line-height:4mm;
     text-align:center;
-    font-size:2.45mm;
-    letter-spacing:.08mm;
+    font-size:2.35mm;
+    line-height:4mm;
     white-space:nowrap;
-    overflow:hidden;
   }
 
-  .bottom{
-    width:48mm;
+  .grid-v{
+    top:58mm;
+    width:.3mm;
     height:42mm;
-    display:grid;
-    grid-template-columns:35mm 13mm;
-    overflow:hidden;
+    background:#c7c1b7;
   }
 
-  .details{
-    width:35mm;
-    height:42mm;
-    display:grid;
-    grid-template-columns:17.5mm 17.5mm;
-    grid-template-rows:14mm 14mm 14mm;
-    overflow:hidden;
-  }
+  .grid-v.v1{left:31.5mm}
+  .grid-v.v2{left:48mm}
+  .grid-v.v3{left:54mm}
 
-  .cell{
-    min-width:0;
-    min-height:0;
-    padding:1.2mm 1mm;
-    border-right:.3mm solid #c7c1b7;
-    border-bottom:.3mm solid #c7c1b7;
+  .data{
     display:flex;
     flex-direction:column;
     justify-content:center;
-    gap:.55mm;
-    overflow:hidden;
+    padding:.8mm 1mm;
   }
 
-  .cell:nth-child(2n){border-right:0}
-  .cell:nth-child(5), .cell:nth-child(6){border-bottom:0}
-
-  .cell .k{
-    font-size:2.35mm;
+  .data .k{
+    font-size:2.3mm;
     line-height:1.05;
     font-weight:700;
-    overflow:hidden;
   }
 
-  .cell .v{
-    font-size:3.05mm;
+  .data .v{
+    margin-top:.8mm;
+    font-size:3.25mm;
     line-height:1.05;
     font-weight:900;
-    white-space:normal;
-    overflow:hidden;
   }
 
-  .total{
-    width:13mm;
-    height:42mm;
+  .price{
+    left:14mm;
+    top:58.3mm;
+    width:17.5mm;
+    height:17.7mm;
+  }
+
+  .time{
+    left:31.8mm;
+    top:58.3mm;
+    width:16.2mm;
+    height:17.7mm;
+    text-align:center;
+  }
+
+  .weight{
+    left:48.3mm;
+    top:58.3mm;
+    width:13.7mm;
+    height:17.7mm;
+    text-align:center;
+  }
+
+  .packed{
+    left:14mm;
+    top:76.3mm;
+    width:17.5mm;
+    height:23.7mm;
+  }
+
+  .best{
+    left:31.8mm;
+    top:76.3mm;
+    width:16.2mm;
+    height:23.7mm;
+    text-align:center;
+  }
+
+  .total-title{
+    left:48.3mm;
+    top:77mm;
+    width:5.7mm;
+    height:8mm;
     display:flex;
-    flex-direction:column;
     align-items:center;
     justify-content:center;
-    border-left:.3mm solid #c7c1b7;
-    padding:.8mm;
-    overflow:hidden;
-  }
-
-  .total-label{
     font-size:2.9mm;
-    line-height:1;
     font-weight:700;
-    margin-bottom:1.2mm;
-    flex:0 0 auto;
   }
 
   .total-value{
+    left:53.7mm;
+    top:76.8mm;
+    width:8mm;
+    height:22.7mm;
     writing-mode:vertical-rl;
     transform:rotate(180deg);
-    font-size:5.6mm;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:5.2mm;
     line-height:1;
     font-weight:900;
-    letter-spacing:0;
     white-space:nowrap;
-    max-height:35mm;
-    overflow:hidden;
   }
 
-  .actual-size{
+  .code-small{
+    left:48.3mm;
+    top:89mm;
+    width:5.7mm;
+    height:10mm;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
     text-align:center;
-    color:#475467;
-    font-size:12px;
-    padding:10px 14px 16px;
+    padding-bottom:1mm;
   }
 
-  @media (max-width:900px){
+  .code-small .k{
+    font-size:2mm;
+    font-weight:700;
+  }
+
+  .code-small .v{
+    margin-top:.5mm;
+    font-size:2.4mm;
+    font-weight:900;
+  }
+
+  /* El clon de impresión está fuera de toda la interfaz */
+  #printRoot{
+    display:none;
+  }
+
+  @media(max-width:900px){
     body{padding:10px}
     .layout{grid-template-columns:1fr}
-    .preview-wrap{padding:18px 8px}
-    .topbar{align-items:flex-start;flex-direction:column}
+    .topbar{flex-direction:column}
+    .preview-zone{min-height:520px;padding:24px 8px}
   }
 
-  @media (max-width:520px){
+  @media(max-width:520px){
     .form-grid{grid-template-columns:1fr}
     .field.full{grid-column:auto}
-    .preview-wrap{min-width:290px}
   }
 
   @page{
@@ -448,108 +464,71 @@
   }
 
   @media print{
-    @page{
-      size:62mm 100mm;
-      margin:0;
+    html,body{
+      width:62mm!important;
+      height:100mm!important;
+      margin:0!important;
+      padding:0!important;
+      overflow:hidden!important;
+      background:#fff!important;
     }
 
-    html, body{
-      width:62mm !important;
-      height:100mm !important;
-      margin:0 !important;
-      padding:0 !important;
-      overflow:hidden !important;
-      background:#fff !important;
+    .app{
+      display:none!important;
     }
 
-    body{
-      display:block !important;
+    #printRoot{
+      display:block!important;
+      position:fixed!important;
+      left:0!important;
+      top:0!important;
+      width:62mm!important;
+      height:100mm!important;
+      margin:0!important;
+      padding:0!important;
+      overflow:hidden!important;
     }
 
-    /* Ocultar toda la interfaz */
-    .topbar,
-    .layout > .panel:first-child,
-    .layout > .panel:last-child > .panel-head,
-    .actual-size{
-      display:none !important;
-    }
-
-    /* Mantener visible únicamente la ruta que contiene la etiqueta */
-    .app,
-    .layout,
-    .layout > .panel:last-child,
-    .preview-wrap,
-    .label,
-    .label-inner{
-      display:block !important;
-      visibility:visible !important;
-    }
-
-    .app,
-    .layout,
-    .layout > .panel:last-child,
-    .preview-wrap{
-      position:static !important;
-      width:62mm !important;
-      height:100mm !important;
-      min-width:62mm !important;
-      min-height:100mm !important;
-      max-width:62mm !important;
-      max-height:100mm !important;
-      margin:0 !important;
-      padding:0 !important;
-      border:0 !important;
-      border-radius:0 !important;
-      box-shadow:none !important;
-      background:none !important;
-      overflow:hidden !important;
-    }
-
-    .label{
-      position:absolute !important;
-      left:0 !important;
-      top:0 !important;
-      width:62mm !important;
-      height:100mm !important;
-      margin:0 !important;
-      padding:0 !important;
-      border:0 !important;
-      border-radius:0 !important;
-      box-shadow:none !important;
-      transform:none !important;
-      overflow:hidden !important;
-      print-color-adjust:exact !important;
-      -webkit-print-color-adjust:exact !important;
-    }
-
-    .label,
-    .label *{
-      visibility:visible !important;
+    #printRoot .label{
+      display:block!important;
+      position:relative!important;
+      left:0!important;
+      top:0!important;
+      width:62mm!important;
+      height:100mm!important;
+      margin:0!important;
+      padding:0!important;
+      border:0!important;
+      border-radius:0!important;
+      box-shadow:none!important;
+      transform:none!important;
+      overflow:hidden!important;
+      print-color-adjust:exact!important;
+      -webkit-print-color-adjust:exact!important;
     }
   }
 </style>
 </head>
 
 <body>
+
 <div class="app">
   <div class="topbar">
     <div>
       <h1>Diseñador de etiqueta adhesiva 62 mm</h1>
-      <p>Plantilla vertical de 62 × 100 mm, preparada para impresión térmica.</p>
+      <p class="subtitle">Motor de impresión con posiciones absolutas en milímetros.</p>
     </div>
 
     <div class="actions">
-      <button type="button" onclick="guardarPlantilla()">Guardar datos</button>
+      <button type="button" onclick="guardar()">Guardar datos</button>
       <button type="button" onclick="restablecer()">Restablecer</button>
-      <button type="button" class="dark" onclick="window.print()">Imprimir etiqueta</button>
+      <button type="button" class="primary" onclick="imprimir()">Imprimir etiqueta</button>
     </div>
   </div>
 
   <div class="layout">
     <section class="panel">
-      <div class="panel-head">
-        <h2>Información de la etiqueta</h2>
-      </div>
+      <div class="panel-head"><h2>Información de la etiqueta</h2></div>
 
       <div class="panel-body">
         <div class="form-grid">
@@ -579,7 +558,6 @@
               <option value="🥩">🥩 Carne</option>
               <option value="🍖">🍖 Corte</option>
               <option value="🐄">🐄 Res</option>
-              <option value="📦">📦 Caja</option>
               <option value="●">● Genérico</option>
             </select>
           </div>
@@ -624,96 +602,88 @@
             <input id="totalManual" type="number" min="0" step="0.01" placeholder="Vacío = peso × precio">
           </div>
         </div>
-
-        <p class="hint">
-          Para etiquetas refrigeradas o congeladas utiliza rollo térmico directo autoadherible
-          con adhesivo permanente para baja temperatura. La impresora debe aceptar etiquetas
-          troqueladas de 62 mm de ancho.
-        </p>
       </div>
     </section>
 
     <section class="panel">
-      <div class="panel-head">
-        <h2>Vista previa</h2>
+      <div class="panel-head"><h2>Vista previa</h2></div>
+      <div class="preview-zone">
+        <div id="screenLabel"></div>
       </div>
-
-      <div class="preview-wrap">
-        <article class="label" id="label">
-          <div class="label-inner">
-            <aside class="brand-strip">
-              <div class="logo" id="vLogo">CVC</div>
-              <div class="vertical-brand" id="vBrand">EXPERTOS EN FRESCURA</div>
-            </aside>
-
-            <main class="main">
-              <section class="top-section">
-                <div class="category" id="vCategory">CARNES</div>
-                <div class="plu" id="vPlu">4395</div>
-              </section>
-
-              <section class="product-section">
-                <div class="product-icon" id="vIcon">🥩</div>
-                <div class="product-name" id="vProduct">RIBEYE ANGUS</div>
-              </section>
-
-              <section class="barcode-section">
-                <svg id="barcode"></svg>
-                <div class="barcode-human" id="vBarcodeText">29043950000508</div>
-              </section>
-
-              <section class="bottom">
-                <div class="details">
-                  <div class="cell">
-                    <div class="k">Precio / kg</div>
-                    <div class="v" id="vPrice">$ 410.00</div>
-                  </div>
-
-                  <div class="cell">
-                    <div class="k">Hora</div>
-                    <div class="v" id="vTime">14:23</div>
-                  </div>
-
-                  <div class="cell">
-                    <div class="k">Fecha de empacado</div>
-                    <div class="v" id="vPacked">03.08.2026</div>
-                  </div>
-
-                  <div class="cell">
-                    <div class="k">Cantidad</div>
-                    <div class="v" id="vWeight">0.508 kg</div>
-                  </div>
-
-                  <div class="cell">
-                    <div class="k">Consumo preferente</div>
-                    <div class="v" id="vBestBefore">08.08.2026</div>
-                  </div>
-
-                  <div class="cell">
-                    <div class="k">Código</div>
-                    <div class="v" id="vShortCode">000508</div>
-                  </div>
-                </div>
-
-                <div class="total">
-                  <div class="total-label">Total</div>
-                  <div class="total-value" id="vTotal">$ 208.28</div>
-                </div>
-              </section>
-            </main>
-          </div>
-        </article>
-      </div>
-
-      <div class="actual-size">
-        Tamaño de impresión configurado: <strong>62 × 100 mm</strong>
+      <div class="preview-note">
+        Tamaño real configurado: <strong>62 × 100 mm</strong>
       </div>
     </section>
   </div>
 </div>
 
+<!-- Este contenedor es independiente y se usa exclusivamente para imprimir -->
+<div id="printRoot"></div>
+
+<template id="labelTemplate">
+  <article class="label">
+    <div class="item strip"></div>
+    <div class="item logo-box" data-bind="logo">CVC</div>
+    <div class="item side-text" data-bind="brand">EXPERTOS EN FRESCURA</div>
+
+    <div class="item category" data-bind="category">CARNES</div>
+    <div class="item plu" data-bind="plu">4395</div>
+
+    <div class="item line l1"></div>
+    <div class="item icon" data-bind="icon">🥩</div>
+    <div class="item product" data-bind="product">RIBEYE ANGUS</div>
+
+    <div class="item line l2"></div>
+
+    <div class="item barcode-wrap">
+      <svg data-bind="barcode"></svg>
+      <div class="barcode-text" data-bind="barcodeText">29043950000508</div>
+    </div>
+
+    <div class="item line l3"></div>
+    <div class="item grid-v v1"></div>
+    <div class="item grid-v v2"></div>
+    <div class="item grid-v v3"></div>
+
+    <div class="item data price">
+      <div class="k">Precio / kg</div>
+      <div class="v" data-bind="price">$ 410.00</div>
+    </div>
+
+    <div class="item data time">
+      <div class="k">Hora</div>
+      <div class="v" data-bind="time">14:23</div>
+    </div>
+
+    <div class="item data weight">
+      <div class="k">Cantidad</div>
+      <div class="v" data-bind="weight">0.508 kg</div>
+    </div>
+
+    <div class="item line l4"></div>
+
+    <div class="item data packed">
+      <div class="k">Fecha de<br>empacado</div>
+      <div class="v" data-bind="packed">03.08.2026</div>
+    </div>
+
+    <div class="item data best">
+      <div class="k">Consumo<br>preferente</div>
+      <div class="v" data-bind="best">08.08.2026</div>
+    </div>
+
+    <div class="item total-title">Total</div>
+    <div class="item total-value" data-bind="total">$ 208.28</div>
+
+    <div class="item code-small">
+      <div class="k">Código</div>
+      <div class="v" data-bind="shortCode">000508</div>
+    </div>
+  </article>
+</template>
+
 <script>
-  const ids = [
+  const fieldIds = [
     "brand","logoText","category","product","icon","plu","price","weight",
     "packedDate","packedTime","bestBefore","barcodeValue","totalManual"
   ];
@@ -737,93 +707,128 @@
     return new Intl.NumberFormat("es-MX",{
       minimumFractionDigits:2,
       maximumFractionDigits:2
-    }).format(Number(n) || 0);
+    }).format(Number(n)||0);
   }
 
-  function soloDigitos(texto){
-    return String(texto || "").replace(/\D/g,"");
+  function soloDigitos(v){
+    return String(v||"").replace(/\D/g,"");
   }
 
-  function inicializarFechas(){
+  function iniciarFechas(){
     const ahora = new Date();
     const consumo = new Date(ahora);
     consumo.setDate(consumo.getDate()+5);
 
     $("packedDate").value = fechaISO(ahora);
     $("bestBefore").value = fechaISO(consumo);
-    $("packedTime").value = `${String(ahora.getHours()).padStart(2,"0")}:${String(ahora.getMinutes()).padStart(2,"0")}`;
+    $("packedTime").value =
+      `${String(ahora.getHours()).padStart(2,"0")}:${String(ahora.getMinutes()).padStart(2,"0")}`;
   }
 
-  function actualizar(){
-    const precio = parseFloat($("price").value) || 0;
-    const peso = parseFloat($("weight").value) || 0;
+  function datosActuales(){
+    const precio = parseFloat($("price").value)||0;
+    const peso = parseFloat($("weight").value)||0;
     const manual = parseFloat($("totalManual").value);
-    const total = Number.isFinite(manual) ? manual : precio * peso;
+    const total = Number.isFinite(manual) ? manual : precio*peso;
 
-    $("vBrand").textContent = $("brand").value || " ";
-    $("vLogo").textContent = $("logoText").value || " ";
-    $("vCategory").textContent = $("category").value || " ";
-    $("vProduct").textContent = $("product").value || " ";
-    $("vIcon").textContent = $("icon").value;
-    $("vPlu").textContent = $("plu").value || " ";
-    $("vPrice").textContent = `$ ${dinero(precio)}`;
-    $("vWeight").textContent = `${peso.toFixed(3)} kg`;
-    $("vPacked").textContent = fechaVisible($("packedDate").value);
-    $("vTime").textContent = $("packedTime").value || "";
-    $("vBestBefore").textContent = fechaVisible($("bestBefore").value);
-    $("vTotal").textContent = `$ ${dinero(total)}`;
+    let barcode = soloDigitos($("barcodeValue").value);
+    if(barcode.length<6) barcode=barcode.padStart(6,"0");
 
-    let code = soloDigitos($("barcodeValue").value);
-    if(code.length < 6) code = code.padStart(6,"0");
-    $("vBarcodeText").textContent = code;
-    $("vShortCode").textContent = code.slice(-6);
+    return {
+      brand:$("brand").value||" ",
+      logo:$("logoText").value||" ",
+      category:$("category").value||" ",
+      product:$("product").value||" ",
+      icon:$("icon").value||" ",
+      plu:$("plu").value||" ",
+      price:`$ ${dinero(precio)}`,
+      weight:`${peso.toFixed(3)} kg`,
+      packed:fechaVisible($("packedDate").value),
+      time:$("packedTime").value||"",
+      best:fechaVisible($("bestBefore").value),
+      total:`$ ${dinero(total)}`,
+      barcode,
+      shortCode:barcode.slice(-6)
+    };
+  }
 
+  function construirEtiqueta(container){
+    container.innerHTML="";
+    const fragment=$("labelTemplate").content.cloneNode(true);
+    container.appendChild(fragment);
+    actualizarEtiqueta(container);
+  }
+
+  function actualizarEtiqueta(container){
+    const d=datosActuales();
+
+    Object.entries(d).forEach(([key,value])=>{
+      container.querySelectorAll(`[data-bind="${key}"]`).forEach(el=>{
+        if(key!=="barcode") el.textContent=value;
+      });
+    });
+
+    const svg=container.querySelector('[data-bind="barcode"]');
     try{
-      JsBarcode("#barcode", code, {
+      JsBarcode(svg,d.barcode,{
         format:"CODE128",
         displayValue:false,
         margin:0,
-        height:52,
+        height:55,
         width:1.15,
         background:"transparent",
         lineColor:"#111"
       });
     }catch(error){
-      console.warn("No se pudo generar el código de barras", error);
+      console.warn("No se pudo generar el código de barras",error);
     }
   }
 
-  function guardarPlantilla(){
-    const data = {};
-    ids.forEach(id => data[id] = $(id).value);
-    localStorage.setItem("vdc360_etiqueta_62mm", JSON.stringify(data));
+  function actualizarTodo(){
+    actualizarEtiqueta($("screenLabel"));
+    actualizarEtiqueta($("printRoot"));
+  }
+
+  function guardar(){
+    const data={};
+    fieldIds.forEach(id=>data[id]=$(id).value);
+    localStorage.setItem("vdc360_label_62x100_abs",JSON.stringify(data));
     alert("Datos guardados en este dispositivo.");
   }
 
-  function cargarPlantilla(){
-    const raw = localStorage.getItem("vdc360_etiqueta_62mm");
-    if(!raw) return;
+  function cargar(){
+    const raw=localStorage.getItem("vdc360_label_62x100_abs");
+    if(!raw)return;
     try{
-      const data = JSON.parse(raw);
-      ids.forEach(id => {
-        if(data[id] !== undefined) $(id).value = data[id];
+      const data=JSON.parse(raw);
+      fieldIds.forEach(id=>{
+        if(data[id]!==undefined)$(id).value=data[id];
       });
-    }catch(e){}
+    }catch(error){}
   }
 
   function restablecer(){
-    localStorage.removeItem("vdc360_etiqueta_62mm");
+    localStorage.removeItem("vdc360_label_62x100_abs");
     location.reload();
   }
 
-  ids.forEach(id => {
-    $(id).addEventListener("input", actualizar);
-    $(id).addEventListener("change", actualizar);
+  function imprimir(){
+    actualizarEtiqueta($("printRoot"));
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>window.print());
+    });
+  }
+
+  fieldIds.forEach(id=>{
+    $(id).addEventListener("input",actualizarTodo);
+    $(id).addEventListener("change",actualizarTodo);
   });
 
-  inicializarFechas();
-  cargarPlantilla();
-  actualizar();
+  iniciarFechas();
+  cargar();
+  construirEtiqueta($("screenLabel"));
+  construirEtiqueta($("printRoot"));
 </script>
+
 </body>
 </html>
