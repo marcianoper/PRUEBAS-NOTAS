@@ -215,21 +215,21 @@ input:focus,select:focus{
    Tiene una zona propia para que nunca cubra el nombre. */
 
 .product{
-  left:29.4mm;
+  left:18.2mm;
   top:15.2mm;
-  width:31.8mm;
+  width:42.8mm;
   height:17.8mm;
-  padding:.5mm .35mm;
+  padding:.5mm .6mm;
   display:flex;
   align-items:center;
   justify-content:center;
   text-align:center;
   text-transform:uppercase;
   font-family:"Arial Narrow",Arial Black,Arial,Helvetica,sans-serif;
-  font-size:5.15mm;
+  font-size:5.4mm;
   line-height:.94;
   font-weight:900;
-  letter-spacing:-.12mm;
+  letter-spacing:-.10mm;
   white-space:nowrap;
   overflow:hidden;
 }
@@ -603,20 +603,22 @@ function construirEtiqueta(container){
 }
 function ajustarNombreProducto(container){
   const el=container.querySelector('[data-bind="product"]');
-  if(!el)return;
+  if(!el) return;
 
-  let tamano=5.15;
+  let tamano=5.4;
+
   el.style.fontSize=`${tamano}mm`;
-  el.style.letterSpacing='-.12mm';
+  el.style.letterSpacing='-.10mm';
   el.style.whiteSpace='nowrap';
 
-  while(el.scrollWidth>el.clientWidth && tamano>2.6){
-    tamano-=0.08;
+  while(el.scrollWidth > el.clientWidth && tamano > 2.45){
+    tamano -= 0.08;
     el.style.fontSize=`${tamano.toFixed(2)}mm`;
   }
 
-  if(tamano<4.4)el.style.letterSpacing='-.18mm';
-  if(tamano<3.5)el.style.letterSpacing='-.22mm';
+  if(tamano < 4.6) el.style.letterSpacing='-.15mm';
+  if(tamano < 3.7) el.style.letterSpacing='-.20mm';
+  if(tamano < 3.0) el.style.letterSpacing='-.24mm';
 }
 function actualizarEtiqueta(container){
   const d=datosActuales();
