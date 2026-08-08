@@ -222,24 +222,23 @@ input:focus,select:focus{
 }
 .product-logo img{image-rendering:auto}
 .product{
-  left:30.2mm;
+  left:29.4mm;
   top:15.2mm;
-  width:30.8mm;
+  width:31.8mm;
   height:17.8mm;
-  padding:.5mm .7mm;
+  padding:.5mm .35mm;
   display:flex;
   align-items:center;
   justify-content:center;
   text-align:center;
   text-transform:uppercase;
-  font-family:Arial Black,Arial,Helvetica,sans-serif;
+  font-family:"Arial Narrow",Arial Black,Arial,Helvetica,sans-serif;
   font-size:5.15mm;
   line-height:.94;
   font-weight:900;
-  letter-spacing:-.08mm;
+  letter-spacing:-.12mm;
+  white-space:nowrap;
   overflow:hidden;
-  overflow-wrap:normal;
-  word-break:normal;
 }
 
 .barcode-wrap{
@@ -612,14 +611,19 @@ function construirEtiqueta(container){
 function ajustarNombreProducto(container){
   const el=container.querySelector('[data-bind="product"]');
   if(!el)return;
+
   let tamano=5.15;
   el.style.fontSize=`${tamano}mm`;
-  el.style.letterSpacing='-.08mm';
-  while((el.scrollWidth>el.clientWidth || el.scrollHeight>el.clientHeight) && tamano>3.15){
-    tamano-=0.12;
+  el.style.letterSpacing='-.12mm';
+  el.style.whiteSpace='nowrap';
+
+  while(el.scrollWidth>el.clientWidth && tamano>2.6){
+    tamano-=0.08;
     el.style.fontSize=`${tamano.toFixed(2)}mm`;
   }
-  if(tamano<4.1)el.style.letterSpacing='-.14mm';
+
+  if(tamano<4.4)el.style.letterSpacing='-.18mm';
+  if(tamano<3.5)el.style.letterSpacing='-.22mm';
 }
 function actualizarEtiqueta(container){
   const d=datosActuales();
