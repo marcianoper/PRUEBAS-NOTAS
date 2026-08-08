@@ -226,7 +226,7 @@ input:focus,select:focus{
   justify-content:center;
   text-align:center;
   text-transform:uppercase;
-  font-family:Impact,"Arial Narrow",Arial,Helvetica,sans-serif;
+  font-family:"Arial Black","Arial Narrow",Arial,Helvetica,sans-serif;
   font-size:5.4mm;
   line-height:.95;
   font-weight:900;
@@ -595,31 +595,32 @@ function ajustarNombreProducto(container){
   const texto = (el.textContent || "").trim();
   const largo = texto.length;
 
-  let tamano = 5.4;
-  let espaciado = "0mm";
+  let tamano = 5.2;
+  let espaciado = "-.04mm";
 
   if(largo <= 10){
-    tamano = 5.4;
+    tamano = 5.2;
   }else if(largo <= 14){
-    tamano = 4.95;
-    espaciado = "-.03mm";
+    tamano = 4.8;
+    espaciado = "-.06mm";
   }else if(largo <= 18){
     // Ejemplo: HAMBURGUESA ANGUS
-    tamano = 4.45;
-    espaciado = "-.05mm";
-  }else if(largo <= 22){
-    tamano = 3.95;
-    espaciado = "-.08mm";
-  }else if(largo <= 27){
-    tamano = 3.5;
+    tamano = 4.15;
     espaciado = "-.10mm";
-  }else{
-    tamano = 3.15;
+  }else if(largo <= 22){
+    tamano = 3.75;
     espaciado = "-.12mm";
+  }else if(largo <= 27){
+    tamano = 3.35;
+    espaciado = "-.14mm";
+  }else{
+    tamano = 3.0;
+    espaciado = "-.16mm";
   }
 
   el.style.fontSize = `${tamano}mm`;
   el.style.letterSpacing = espaciado;
+  el.style.fontFamily = '"Arial Black","Arial Narrow",Arial,Helvetica,sans-serif';
   el.style.transform = "none";
   el.style.whiteSpace = "nowrap";
 }
