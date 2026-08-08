@@ -216,23 +216,24 @@ input:focus,select:focus{
    Tiene una zona propia para que nunca cubra el nombre. */
 
 .product{
-  left:18.2mm;
+  left:18.3mm;
   top:15.2mm;
-  width:42.9mm;
+  width:42.4mm;
   height:17.8mm;
-  padding:.5mm .45mm;
+  padding:.5mm .7mm;
   display:flex;
   align-items:center;
   justify-content:center;
   text-align:center;
   text-transform:uppercase;
-  font-family:"Arial Narrow",Arial Black,Arial,Helvetica,sans-serif;
-  font-size:5.6mm;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:5.35mm;
   line-height:.95;
   font-weight:900;
-  letter-spacing:-.10mm;
+  letter-spacing:-.08mm;
   white-space:nowrap;
   overflow:hidden;
+  transform-origin:center center;
 }
 
 .barcode-wrap{
@@ -592,32 +593,77 @@ function ajustarNombreProducto(container){
   const el=container.querySelector('[data-bind="product"]');
   if(!el) return;
 
-  const texto=(el.textContent || "").trim();
+  // Si el contenedor está oculto (caso printRoot), lo hacemos medible
+  // temporalmente fuera de pantalla.
+  const oculto = el.clientWidth === 0 || el.clientHeight === 0;
+  let prev = null;
 
-  let tamano=5.6;
-  el.style.fontSize=`${tamano}mm`;
-  el.style.letterSpacing='-.10mm';
-  el.style.whiteSpace='nowrap';
+  if(oculto){
+    prev = {
+      display: container.style.display,
+      position: container.style.position,
+      visibility: container.style.visibility,
+      left: container.style.left,
+      top: container.style.top,
+      width: container.style.width,
+      height: container.style.height
+    };
 
-  while(el.scrollWidth > el.clientWidth && tamano > 2.35){
+    container.style.display = 'block';
+    container.style.position = 'fixed';
+    container.style.visibility = 'hidden';
+    container.style.left = '-10000px';
+    container.style.top = '0';
+    container.style.width = '80mm';
+    container.style.height = '100mm';
+  }
+
+  let tamano = 5.35;
+
+  el.style.transform = 'none';
+  el.style.fontSize = `${tamano}mm`;
+  el.style.letterSpacing = '-.08mm';
+  el.style.whiteSpace = 'nowrap';
+
+  // Reducimos el tamaño hasta que quepa.
+  while(
+    (el.scrollWidth > el.clientWidth - 2) &&
+    tamano > 2.15
+  ){
     tamano -= 0.05;
-    el.style.fontSize=`${tamano.toFixed(2)}mm`;
+    el.style.fontSize = `${tamano.toFixed(2)}mm`;
   }
 
-  if(el.scrollWidth > el.clientWidth){
-    el.style.letterSpacing='-.22mm';
-  }else if(tamano < 4.4){
-    el.style.letterSpacing='-.17mm';
-  }else if(tamano < 5.0){
-    el.style.letterSpacing='-.13mm';
-  }
+  // Ajustamos ligeramente el espaciado según el tamaño.
+  if(tamano < 4.7) el.style.letterSpacing = '-.12mm';
+  if(tamano < 4.0) el.style.letterSpacing = '-.17mm';
+  if(tamano < 3.2) el.style.letterSpacing = '-.21mm';
 
-  // Seguridad extra para nombres muy largos.
-  if(el.scrollWidth > el.clientWidth){
-    el.style.transform='scaleX(.94)';
-    el.style.transformOrigin='center center';
-  }else{
-    el.style.transform='none';
+  // Seguridad final: si por la fuente del equipo todavía se pasa,
+  // comprimimos SOLO horizontalmente exactamente lo necesario.
+  requestAnimationFrame(() => {
+    const disponible = Math.max(1, el.clientWidth - 3);
+    const usado = Math.max(1, el.scrollWidth);
+
+    if(usado > disponible){
+      const escala = Math.max(.72, Math.min(1, disponible / usado));
+      el.style.transform = `scaleX(${escala.toFixed(3)})`;
+    }else{
+      el.style.transform = 'none';
+    }
+  });
+
+  if(oculto && prev){
+    // Restauramos printRoot después de medirlo.
+    requestAnimationFrame(() => {
+      container.style.display = prev.display;
+      container.style.position = prev.position;
+      container.style.visibility = prev.visibility;
+      container.style.left = prev.left;
+      container.style.top = prev.top;
+      container.style.width = prev.width;
+      container.style.height = prev.height;
+    });
   }
 }
 function actualizarEtiqueta(container){
@@ -665,8 +711,34 @@ function restablecer(){
   location.reload();
 }
 function imprimir(){
-  actualizarEtiqueta($("printRoot"));
-  requestAnimationFrame(()=>requestAnimationFrame(()=>window.print()));
+  const printRoot = $("printRoot");
+
+  // Hacemos visible el área de impresión fuera de pantalla para que
+  // Chrome pueda medir correctamente el nombre del producto.
+  const oldStyle = printRoot.getAttribute("style");
+
+  printRoot.style.display = "block";
+  printRoot.style.position = "fixed";
+  printRoot.style.visibility = "hidden";
+  printRoot.style.left = "-10000px";
+  printRoot.style.top = "0";
+  printRoot.style.width = "80mm";
+  printRoot.style.height = "100mm";
+
+  actualizarEtiqueta(printRoot);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      // Quitamos los estilos temporales justo antes de imprimir.
+      if(oldStyle === null){
+        printRoot.removeAttribute("style");
+      }else{
+        printRoot.setAttribute("style", oldStyle);
+      }
+
+      requestAnimationFrame(() => window.print());
+    });
+  });
 }
 fieldIds.forEach(id=>{
   $(id).addEventListener("input",actualizarTodo);
